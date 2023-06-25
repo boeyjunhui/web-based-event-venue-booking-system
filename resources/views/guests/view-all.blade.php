@@ -2,11 +2,11 @@
 
 @section('content')
     @if (session('success'))
-        <div class="p-3 mt-4 text-sm text-teal-800 border border-teal-200 rounded-lg bg-teal-100">
+        <div class="p-3 mt-4 mb-4 text-sm text-teal-800 border border-teal-200 rounded-lg bg-teal-100">
             {{ session('success') }}
         </div>
     @elseif (session('error'))
-        <div class="p-3 mt-4 text-sm text-red-800 border border-red-200 rounded-lg bg-red-100">
+        <div class="p-3 mt-4 mb-4 text-sm text-red-800 border border-red-200 rounded-lg bg-red-100">
             {{ session('error') }}
         </div>
     @endif
