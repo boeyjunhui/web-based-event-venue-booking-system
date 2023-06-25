@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'super_admin' => [
+            'driver' => 'session',
+            'provider' => 'super_admins',
+        ],
+        'event_venue_owner' => [
+            'driver' => 'session',
+            'provider' => 'event_venue_owners',
+        ],
+        'guest' => [
+            'driver' => 'session',
+            'provider' => 'guests',
+        ],
     ],
 
     /*
@@ -63,6 +75,18 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'super_admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SuperAdmin::class,
+        ],
+        'event_venue_owners' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\EventVenueOwner::class,
+        ],
+        'guests' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Guest::class,
         ],
 
         // 'users' => [
@@ -93,6 +117,24 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'super_admins' => [
+            'provider' => 'super_admins',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'event_venue_owners' => [
+            'provider' => 'event_venue_owners',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'guests' => [
+            'provider' => 'guests',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
