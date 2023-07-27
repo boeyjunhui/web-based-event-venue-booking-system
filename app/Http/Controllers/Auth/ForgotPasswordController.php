@@ -21,10 +21,13 @@ class ForgotPasswordController extends Controller
 
     use SendsPasswordResetEmails;
 
+    /* ========================================
+    Super Admin & Event Venue Owner
+    ======================================== */
     // forgot password form
     public function displayForgotPasswordForm()
     {
-        return view('auth.internal-user.forgot-password');
+        return view('auth.management-system.forgot-password');
     }
 
     // send reset password email
@@ -36,11 +39,38 @@ class ForgotPasswordController extends Controller
     // reset password form
     public function displayResetPasswordForm()
     {
-        return view('auth/internal-user.reset-password');
+        return view('auth.management-system.reset-password');
     }
 
     // reset password
     public function resetPassword(Request $request)
+    {
+        //
+    }
+
+    /* ========================================
+    Guest
+    ======================================== */
+    // forgot password form
+    public function displayGuestForgotPasswordForm()
+    {
+        return view('auth.booking-system.forgot-password');
+    }
+
+    // send reset password email
+    public function guestForgotPassword(Request $request)
+    {
+        //
+    }
+
+    // reset password form
+    public function displayGuestResetPasswordForm()
+    {
+        return view('auth.booking-system.reset-password');
+    }
+
+    // reset password
+    public function guestResetPassword(Request $request)
     {
         //
     }

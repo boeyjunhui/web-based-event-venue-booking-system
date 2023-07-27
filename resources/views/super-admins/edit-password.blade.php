@@ -1,4 +1,4 @@
-@extends('layouts.internal-user')
+@extends('layouts.management-system')
 
 @section('content')
     <p class="text-gray-400"><a href="/evbs/super-admins" class="hover:underline hover:text-teal-500 transition">Super Admins</a> / <a href="/evbs/super-admins/{{ $superAdmin->id }}" class="hover:underline hover:text-teal-500 transition">{{ $superAdmin->first_name }} {{ $superAdmin->last_name }}</a> / <span class="text-teal-500">Change Password</span></p>

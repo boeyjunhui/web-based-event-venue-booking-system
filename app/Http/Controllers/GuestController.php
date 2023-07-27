@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Hash;
 
 class GuestController extends Controller
 {
+    /* ========================================
+    Super Admin
+    ======================================== */
     // display add form
     public function add()
     {

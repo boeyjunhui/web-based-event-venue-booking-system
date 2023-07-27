@@ -5,9 +5,11 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\EventVenueOwnerController;
@@ -134,6 +136,34 @@ Route::patch('/evbs/bookings/{booking}/update', [BookingController::class, 'upda
 Route::delete('/evbs/bookings/{booking}/delete', [BookingController::class, 'delete']);
 
 /* ========================================
+Event Venue Owner
+======================================== */
+// register account
+
+
+/* ========================================
 Guest
 ======================================== */
+// login
+
+
+// logout
+
+
+// register account
+
+
+// forgot password & reset password
+
+
+// homepage
+
+
+// profile
+
+
+// event venue
+
+
+// booking
 

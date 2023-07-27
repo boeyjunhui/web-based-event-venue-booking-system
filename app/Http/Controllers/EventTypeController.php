@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class EventTypeController extends Controller
 {
+    /* ========================================
+    Super Admin
+    ======================================== */
     // display add form
     public function add()
     {

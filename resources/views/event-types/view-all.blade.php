@@ -1,4 +1,4 @@
-@extends('layouts.internal-user')
+@extends('layouts.management-system')
 
 @section('content')
     @if (session('success'))
@@ -27,12 +27,12 @@
                 <table id="data-table" class="text-sm whitespace-nowrap">
                     <thead class="text-white bg-gray-700">
                         <tr>
+                            <th scope="col">Actions</th>
                             <th scope="col">No</th>
                             <th scope="col">Event Type Name</th>
                             <th scope="col">Status</th>
                             <th scope="col">Created At</th>
                             <th scope="col">Updated At</th>
-                            <th scope="col">Actions</th>
                     </thead>
 
                     <tbody class="text-gray-800 bg-neutral-50">
@@ -40,20 +40,7 @@
 
                         @forelse ($eventTypes as $eventType)
                             <tr class="hover:bg-neutral-200 transition">
-                                <td>{{ $no }}</td>
-                                <td>{{ $eventType->event_type_name }}</td>
-                                <td>
-                                    @if ($eventType->status == 0)
-                                        <span class="p-1.5 text-sm font-medium text-white bg-red-500 rounded-md">Inactive</span>
-                                    @elseif ($eventType->status == 1)
-                                        <span class="p-1.5 text-sm font-medium text-white bg-teal-500 rounded-md">Active</span>
-                                    @endif
-                                </td>
-                                <td>{{ $eventType->created_at }}</td>
-                                <td>{{ $eventType->updated_at }}</td>
                                 <td style="display: flex;">
-                                    {{-- <a href="/evbs/event-types/{{ $eventType->id }}"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-blue-500 hover:bg-blue-700 transition"><i class="bx bx-info-circle"></i></button></a>
-                                    <span class="ml-2"></span> --}}
                                     <a href="/evbs/event-types/{{ $eventType->id }}/edit"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-amber-500 hover:bg-amber-700 transition"><i class="bx bx-pencil"></i></button></a>
 
                                     @if ($eventType->status == 0)
@@ -79,11 +66,22 @@
                                         <button type="submit" class="ml-2 p-1 w-10 text-lg text-white rounded-md bg-red-500 hover:bg-red-700 transition" id="delete-confirmation-{{ $no }}"><i class="bx bx-trash"></i></button>
                                     </form>
                                 </td>
+                                <td>{{ $no }}</td>
+                                <td>{{ $eventType->event_type_name }}</td>
+                                <td>
+                                    @if ($eventType->status == 0)
+                                        <span class="p-1.5 text-sm font-medium text-white bg-red-500 rounded-md">Inactive</span>
+                                    @elseif ($eventType->status == 1)
+                                        <span class="p-1.5 text-sm font-medium text-white bg-teal-500 rounded-md">Active</span>
+                                    @endif
+                                </td>
+                                <td>{{ $eventType->created_at }}</td>
+                                <td>{{ $eventType->updated_at }}</td>
                             </tr>
 
                             {{-- activate confirmation --}}
                             <script>
-                                document.getElementById('activate-confirmation-{{ $no }}').addEventListener('click', function () {
+                                document.getElementById('activate-confirmation-{{ $no }}')?.addEventListener('click', function () {
                                     var form = $(this).closest("form");
                                     event.preventDefault();
 
@@ -108,7 +106,7 @@
 
                             {{-- deactivate confirmation --}}
                             <script>
-                                document.getElementById('deactivate-confirmation-{{ $no }}').addEventListener('click', function () {
+                                document.getElementById('deactivate-confirmation-{{ $no }}')?.addEventListener('click', function () {
                                     var form = $(this).closest("form");
                                     event.preventDefault();
 
@@ -133,7 +131,7 @@
 
                             {{-- delete confirmation --}}
                             <script>
-                                document.getElementById('delete-confirmation-{{ $no }}').addEventListener('click', function () {
+                                document.getElementById('delete-confirmation-{{ $no }}')?.addEventListener('click', function () {
                                     var form = $(this).closest("form");
                                     event.preventDefault();
 

@@ -6,9 +6,13 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    /* ========================================
+    Super Admin & Event Venue Owner
+    ======================================== */
+    // display dashboard
     public function dashboard()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 

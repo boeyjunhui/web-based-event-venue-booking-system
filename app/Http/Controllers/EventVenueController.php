@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class EventVenueController extends Controller
 {
+    /* ========================================
+    Super Admin & Event Venue Owner
+    ======================================== */
     // display add form
     public function add()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -21,7 +24,7 @@ class EventVenueController extends Controller
     // insert data into database
     public function create()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -31,7 +34,7 @@ class EventVenueController extends Controller
     // get all rows of data from database
     public function viewAll()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -41,7 +44,7 @@ class EventVenueController extends Controller
     // get one row of data from database
     public function view()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -51,7 +54,7 @@ class EventVenueController extends Controller
     // display edit form
     public function edit()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -61,7 +64,7 @@ class EventVenueController extends Controller
     // update new data to database
     public function update()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -71,7 +74,7 @@ class EventVenueController extends Controller
     // activate a data
     public function activate()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -81,7 +84,7 @@ class EventVenueController extends Controller
     // deactivate a data
     public function deactivate()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -91,10 +94,25 @@ class EventVenueController extends Controller
     // delete data from database
     public function delete()
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
+        //
+    }
+
+    /* ========================================
+    Guest
+    ======================================== */
+    // view event venue
+    public function viewEventVenue()
+    {
+        //
+    }
+
+    // search event venue
+    public function searchEventVenue()
+    {
         //
     }
 }

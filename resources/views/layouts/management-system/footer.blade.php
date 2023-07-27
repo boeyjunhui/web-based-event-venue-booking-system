@@ -24,7 +24,7 @@
     {{-- sweetalert pop up box --}}
     {{-- activate confirmation --}}
     <script>
-        document.getElementById('activate-confirmation').addEventListener('click', function () {
+        document.getElementById('activate-confirmation')?.addEventListener('click', function () {
             var form = $(this).closest("form");
             event.preventDefault();
 
@@ -49,7 +49,7 @@
 
     {{-- deactivate confirmation --}}
     <script>
-        document.getElementById('deactivate-confirmation').addEventListener('click', function () {
+        document.getElementById('deactivate-confirmation')?.addEventListener('click', function () {
             var form = $(this).closest("form");
             event.preventDefault();
 
@@ -74,7 +74,7 @@
 
     {{-- delete confirmation --}}
     <script>
-        document.getElementById('delete-confirmation').addEventListener('click', function () {
+        document.getElementById('delete-confirmation')?.addEventListener('click', function () {
             var form = $(this).closest("form");
             event.preventDefault();
 
@@ -99,7 +99,7 @@
 
     {{-- logout confirmation --}}
     <script>
-        document.getElementById('logout-confirmation').addEventListener('click', function () {
+        document.getElementById('logout-confirmation')?.addEventListener('click', function () {
             var form = $(this).closest("form");
             event.preventDefault();
 

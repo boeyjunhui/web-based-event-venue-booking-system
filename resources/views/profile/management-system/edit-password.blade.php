@@ -1,4 +1,4 @@
-@extends('layouts.internal-user')
+@extends('layouts.management-system')
 
 @section('content')
     <p class="text-gray-400"><a href="/evbs/profile" class="hover:underline hover:text-teal-500 transition">My Profile</a> / <span class="text-teal-500">Change Password</span></p>

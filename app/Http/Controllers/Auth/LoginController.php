@@ -39,15 +39,15 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
-        $this->middleware('guest:super_admin')->except('logout');
-        $this->middleware('guest:event_venue_owner')->except('logout');
-        $this->middleware('guest:guest')->except('logout');
     }
 
+    /* ========================================
+    Super Admin & Event Venue Owner
+    ======================================== */
     // login form
     public function displayLoginForm()
     {
-        return view('auth.internal-user.login');
+        return view('auth.management-system.login');
     }
 
     // login authentication
@@ -100,5 +100,20 @@ class LoginController extends Controller
         } else {
             return back();
         }
+    }
+
+    /* ========================================
+    Guest
+    ======================================== */
+    // login form
+    public function displayGuestLoginForm()
+    {
+        return view('auth.booking-system.login');
+    }
+
+    // login authentication
+    public function guestLogin(Request $request)
+    {
+        //
     }
 }

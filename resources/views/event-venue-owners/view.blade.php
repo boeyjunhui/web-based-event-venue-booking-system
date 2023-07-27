@@ -1,4 +1,4 @@
-@extends('layouts.internal-user')
+@extends('layouts.management-system')
 
 @section('content')
     <p class="text-gray-400"><a href="/evbs/event-venue-owners" class="hover:underline hover:text-teal-500 transition">Event Venue Owners</a> / <span class="text-teal-500">{{ $eventVenueOwner->first_name }} {{ $eventVenueOwner->last_name }}</span></p>

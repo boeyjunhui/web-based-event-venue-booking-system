@@ -1,4 +1,4 @@
-@extends('layouts.internal-user')
+@extends('layouts.management-system')
 
 @section('content')
     <p class="text-gray-400"><a href="/evbs/event-types" class="hover:underline hover:text-teal-500 transition">Event Types</a> / <a href="/evbs/event-types/{{ $eventType->id }}" class="hover:underline hover:text-teal-500 transition">{{ $eventType->event_type_name }}</a> / <span class="text-teal-500">Edit Event Type</span></p>

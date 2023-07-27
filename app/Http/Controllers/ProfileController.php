@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
+    /* ========================================
+    Super Admin & Event Venue Owner
+    ======================================== */
     // get one row of data from database
     public function view(Request $request)
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -23,21 +26,21 @@ class ProfileController extends Controller
                 ->where('super_admins.id', $userID)
                 ->first();
 
-            return view('profile.view', compact('user'));
+            return view('profile.management-system.view', compact('user'));
         } else if (session('user_role') == "Event Venue Owner") {
             $user = DB::table('event_venue_owners')
                 ->select('event_venue_owners.*')
                 ->where('event_venue_owners.id', $userID)
                 ->first();
 
-            return view('profile.view', compact('user'));
+            return view('profile.management-system.view', compact('user'));
         }
     }
 
     // display edit form
     public function edit(Request $request)
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -49,21 +52,21 @@ class ProfileController extends Controller
                 ->where('super_admins.id', $userID)
                 ->first();
 
-            return view('profile.edit', compact('user'));
+            return view('profile.management-system.edit', compact('user'));
         } else if (session('user_role') == "Event Venue Owner") {
             $user = DB::table('event_venue_owners')
                 ->select('event_venue_owners.*')
                 ->where('event_venue_owners.id', $userID)
                 ->first();
 
-            return view('profile.edit', compact('user'));
+            return view('profile.management-system.edit', compact('user'));
         }
     }
 
     // update new data to database
     public function update(Request $request)
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -119,7 +122,7 @@ class ProfileController extends Controller
     // display edit password form
     public function editPassword(Request $request)
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -131,21 +134,21 @@ class ProfileController extends Controller
                 ->where('super_admins.id', $userID)
                 ->first();
 
-            return view('profile.edit-password', compact('user'));
+            return view('profile.management-system.edit-password', compact('user'));
         } else if (session('user_role') == "Event Venue Owner") {
             $user = DB::table('event_venue_owners')
                 ->select('event_venue_owners.*')
                 ->where('event_venue_owners.id', $userID)
                 ->first();
 
-            return view('profile.edit-password', compact('user'));
+            return view('profile.management-system.edit-password', compact('user'));
         }
     }
 
     // update new password to database
     public function updatePassword(Request $request)
     {
-        if (!session('user_role')) {
+        if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         }
 
@@ -181,5 +184,68 @@ class ProfileController extends Controller
         }
 
         return redirect('/evbs/profile')->with('success', 'Password changed successfully!');
+    }
+
+    /* ========================================
+    Guest
+    ======================================== */
+    // get one row of data from database
+    public function viewGuestProfile(Request $request)
+    {
+        if (session('user_role') != "Guest") {
+            return redirect('/login');
+        }
+
+        $userID = session('user')->id;
+
+        //
+    }
+
+    // display edit form
+    public function editGuestProfile(Request $request)
+    {
+        if (session('user_role') != "Guest") {
+            return redirect('/login');
+        }
+
+        $userID = session('user')->id;
+
+        //
+    }
+
+    // update new data to database
+    public function updateGuestProfile(Request $request)
+    {
+        if (session('user_role') != "Guest") {
+            return redirect('/login');
+        }
+
+        $userID = session('user')->id;
+
+        //
+    }
+
+    // display edit password form
+    public function editGuestPassword(Request $request)
+    {
+        if (session('user_role') != "Guest") {
+            return redirect('/login');
+        }
+
+        $userID = session('user')->id;
+
+        //
+    }
+
+    // update new password to database
+    public function updateGuestPassword(Request $request)
+    {
+        if (session('user_role') != "Guest") {
+            return redirect('/login');
+        }
+
+        $userID = session('user')->id;
+
+        //
     }
 }

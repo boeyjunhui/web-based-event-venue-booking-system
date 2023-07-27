@@ -1,4 +1,4 @@
-@extends('layouts.internal-user')
+@extends('layouts.management-system')
 
 @section('content')
     @if (session('success'))
@@ -27,6 +27,7 @@
                 <table id="data-table" class="text-sm whitespace-nowrap">
                     <thead class="text-white bg-gray-700">
                         <tr>
+                            <th scope="col">Actions</th>
                             <th scope="col">No</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
@@ -34,7 +35,6 @@
                             <th scope="col">Status</th>
                             <th scope="col">Created At</th>
                             <th scope="col">Updated At</th>
-                            <th scope="col">Actions</th>
                     </thead>
 
                     <tbody class="text-gray-800 bg-neutral-50">
@@ -42,23 +42,6 @@
 
                         @forelse ($superAdmins as $superAdmin)
                             <tr class="hover:bg-neutral-200 transition">
-                                <td>{{ $no }}</td>
-                                <td>{{ $superAdmin->first_name }} {{ $superAdmin->last_name }}</td>
-                                <td>
-                                    <a href="mailto:{{ $superAdmin->email }}" class="hover:underline hover:text-teal-500 transition">{{ $superAdmin->email }}</a>
-                                </td>
-                                <td>
-                                    <a href="tel:{{ $superAdmin->phone_number }}" class="hover:underline hover:text-teal-500 transition">{{ $superAdmin->phone_number }}</a>
-                                </td>
-                                <td>
-                                    @if ($superAdmin->status == 0)
-                                        <span class="p-1.5 text-sm font-medium text-white bg-red-500 rounded-md">Inactive</span>
-                                    @elseif ($superAdmin->status == 1)
-                                        <span class="p-1.5 text-sm font-medium text-white bg-teal-500 rounded-md">Active</span>
-                                    @endif
-                                </td>
-                                <td>{{ $superAdmin->created_at }}</td>
-                                <td>{{ $superAdmin->updated_at }}</td>
                                 <td style="display: flex;">
                                     <a href="/evbs/super-admins/{{ $superAdmin->id }}"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-blue-500 hover:bg-blue-700 transition"><i class="bx bx-info-circle"></i></button></a>
                                     <span class="ml-2"></span>
@@ -87,11 +70,28 @@
                                         <button type="submit" class="ml-2 p-1 w-10 text-lg text-white rounded-md bg-red-500 hover:bg-red-700 transition" id="delete-confirmation-{{ $no }}"><i class="bx bx-trash"></i></button>
                                     </form>
                                 </td>
+                                <td>{{ $no }}</td>
+                                <td>{{ $superAdmin->first_name }} {{ $superAdmin->last_name }}</td>
+                                <td>
+                                    <a href="mailto:{{ $superAdmin->email }}" class="hover:underline hover:text-teal-500 transition">{{ $superAdmin->email }}</a>
+                                </td>
+                                <td>
+                                    <a href="tel:{{ $superAdmin->phone_number }}" class="hover:underline hover:text-teal-500 transition">{{ $superAdmin->phone_number }}</a>
+                                </td>
+                                <td>
+                                    @if ($superAdmin->status == 0)
+                                        <span class="p-1.5 text-sm font-medium text-white bg-red-500 rounded-md">Inactive</span>
+                                    @elseif ($superAdmin->status == 1)
+                                        <span class="p-1.5 text-sm font-medium text-white bg-teal-500 rounded-md">Active</span>
+                                    @endif
+                                </td>
+                                <td>{{ $superAdmin->created_at }}</td>
+                                <td>{{ $superAdmin->updated_at }}</td>
                             </tr>
 
                             {{-- activate confirmation --}}
                             <script>
-                                document.getElementById('activate-confirmation-{{ $no }}').addEventListener('click', function () {
+                                document.getElementById('activate-confirmation-{{ $no }}')?.addEventListener('click', function () {
                                     var form = $(this).closest("form");
                                     event.preventDefault();
 
@@ -116,7 +116,7 @@
 
                             {{-- deactivate confirmation --}}
                             <script>
-                                document.getElementById('deactivate-confirmation-{{ $no }}').addEventListener('click', function () {
+                                document.getElementById('deactivate-confirmation-{{ $no }}')?.addEventListener('click', function () {
                                     var form = $(this).closest("form");
                                     event.preventDefault();
 
@@ -141,7 +141,7 @@
 
                             {{-- delete confirmation --}}
                             <script>
-                                document.getElementById('delete-confirmation-{{ $no }}').addEventListener('click', function () {
+                                document.getElementById('delete-confirmation-{{ $no }}')?.addEventListener('click', function () {
                                     var form = $(this).closest("form");
                                     event.preventDefault();
 

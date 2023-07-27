@@ -29,7 +29,8 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    // protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -69,5 +70,51 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    /* ========================================
+    Event Venue Owner
+    ======================================== */
+    // display event venue owner register form
+    public function displayEventVenueOwnerRegisterForm()
+    {
+        if (session('user_role') == "Event Venue Owner") {
+            return redirect('/evbs/dashboard');
+        } else {
+            return view('auth.management-system.register');
+        }
+    }
+
+    // register event venue owner account
+    public function eventVenueOwnerAccountRegistration()
+    {
+        if (session('user_role') == "Event Venue Owner") {
+            return redirect('/evbs/dashboard');
+        } else {
+            //
+        }
+    }
+
+    /* ========================================
+    Guest
+    ======================================== */
+    // display guest register form
+    public function displayGuestRegisterForm()
+    {
+        if (session('user_role') == "Guest") {
+            return redirect('/');
+        } else {
+            return view('auth.booking-system.register');
+        }
+    }
+
+    // register guest account
+    public function guestAccountRegistration()
+    {
+        if (session('user_role') == "Guest") {
+            return redirect('/');
+        } else {
+            //
+        }
     }
 }
