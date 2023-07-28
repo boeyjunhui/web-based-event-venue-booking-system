@@ -18,7 +18,7 @@ class EventVenueController extends Controller
             return redirect('/evbs/login');
         }
 
-        //
+        return view('event-venues.management-system.add');
     }
 
     // insert data into database
@@ -38,7 +38,11 @@ class EventVenueController extends Controller
             return redirect('/evbs/login');
         }
 
-        //
+        $eventVenues = DB::table('event_venues')
+            ->select('event_venues.*')
+            ->get();
+
+        return view('event-venues.management-system.view-all', compact('eventVenues'));
     }
 
     // get one row of data from database

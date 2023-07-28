@@ -35,6 +35,7 @@
                             <th scope="col">Status</th>
                             <th scope="col">Created At</th>
                             <th scope="col">Updated At</th>
+                        </tr>
                     </thead>
 
                     <tbody class="text-gray-800 bg-neutral-50">
