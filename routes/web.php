@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
 use App\Http\Controllers\DashboardController;
@@ -66,6 +66,48 @@ Route::patch('/evbs/profile/update-profile', [ProfileController::class, 'update'
 Route::get('/evbs/profile/change-password', [ProfileController::class, 'editPassword']);
 Route::patch('/evbs/profile/update-password', [ProfileController::class, 'updatePassword']);
 
+// booking
+Route::get('/evbs/checkEventVenueAvailability/{eventVenue}/{startDate}/{endDate}', [BookingController::class, 'checkEventVenueAvailability']);
+Route::get('/evbs/bookings/add-guest-booking', [BookingController::class, 'addGuestBooking']);
+Route::get('/evbs/bookings/add-venue-blocking', [BookingController::class, 'addVenueBlocking']);
+Route::post('/evbs/bookings/create-guest-booking', [BookingController::class, 'createGuestBooking']);
+Route::post('/evbs/bookings/create-venue-blocking', [BookingController::class, 'createVenueBlocking']);
+Route::get('/evbs/bookings/guest-bookings', [BookingController::class, 'viewAllGuestBookings']);
+Route::get('/evbs/bookings/venue-blockings', [BookingController::class, 'viewAllVenueBlockings']);
+Route::get('/evbs/bookings/guest-booking/{booking}', [BookingController::class, 'viewGuestBooking']);
+Route::get('/evbs/bookings/venue-blocking/{booking}', [BookingController::class, 'viewVenueBlocking']);
+Route::get('/evbs/bookings/{booking}/edit-guest-booking', [BookingController::class, 'editGuestBooking']);
+Route::get('/evbs/bookings/{booking}/edit-venue-blocking', [BookingController::class, 'editVenueBlocking']);
+Route::patch('/evbs/bookings/{booking}/update-guest-booking', [BookingController::class, 'updateGuestBooking']);
+Route::patch('/evbs/bookings/{booking}/update-venue-blocking', [BookingController::class, 'updateVenueBlocking']);
+Route::patch('/evbs/bookings/{booking}/cancel-guest-booking', [BookingController::class, 'cancelGuestBooking']);
+Route::patch('/evbs/bookings/{booking}/cancel-venue-blocking', [BookingController::class, 'cancelVenueBlocking']);
+Route::delete('/evbs/bookings/{booking}/delete-guest-booking', [BookingController::class, 'deleteGuestBooking']);
+Route::delete('/evbs/bookings/{booking}/delete-venue-blocking', [BookingController::class, 'deleteVenueBlocking']);
+
+// event type
+Route::get('/evbs/event-types/add', [EventTypeController::class, 'add']);
+Route::post('/evbs/event-types/create', [EventTypeController::class, 'create']);
+Route::get('/evbs/event-types', [EventTypeController::class, 'viewAll']);
+Route::get('/evbs/event-types/{eventType}/edit', [EventTypeController::class, 'edit']);
+Route::patch('/evbs/event-types/{eventType}/update', [EventTypeController::class, 'update']);
+Route::patch('/evbs/event-types/{eventType}/activate', [EventTypeController::class, 'activate']);
+Route::patch('/evbs/event-types/{eventType}/deactivate', [EventTypeController::class, 'deactivate']);
+Route::delete('/evbs/event-types/{eventType}/delete', [EventTypeController::class, 'delete']);
+
+// event venue
+Route::get('/evbs/event-venues/add', [EventVenueController::class, 'add']);
+Route::post('/evbs/event-venues/create', [EventVenueController::class, 'create']);
+Route::get('/evbs/event-venues', [EventVenueController::class, 'viewAll']);
+Route::get('/evbs/event-venues/{guest}', [EventVenueController::class, 'view']);
+Route::get('/evbs/event-venues/{eventVenue}/edit', [EventVenueController::class, 'edit']);
+Route::patch('/evbs/event-venues/{eventVenue}/update', [EventVenueController::class, 'update']);
+Route::patch('/evbs/event-venues/{eventVenue}/activate', [EventVenueController::class, 'activate']);
+Route::patch('/evbs/event-venues/{eventVenue}/deactivate', [EventVenueController::class, 'deactivate']);
+Route::patch('/evbs/event-venues/{eventVenue}/delete-single-event-venue-image', [EventVenueController::class, 'deleteSingleEventVenueImage']);
+Route::patch('/evbs/event-venues/{eventVenue}/delete-all-event-venue-images', [EventVenueController::class, 'deleteAllEventVenueImages']);
+Route::delete('/evbs/event-venues/{eventVenue}/delete', [EventVenueController::class, 'delete']);
+
 // super admin
 Route::get('/evbs/super-admins/add', [SuperAdminController::class, 'add']);
 Route::post('/evbs/super-admins/create', [SuperAdminController::class, 'create']);
@@ -104,36 +146,6 @@ Route::patch('/evbs/guests/{guest}/update-password', [GuestController::class, 'u
 Route::patch('/evbs/guests/{guest}/activate', [GuestController::class, 'activate']);
 Route::patch('/evbs/guests/{guest}/deactivate', [GuestController::class, 'deactivate']);
 Route::delete('/evbs/guests/{guest}/delete', [GuestController::class, 'delete']);
-
-// event type
-Route::get('/evbs/event-types/add', [EventTypeController::class, 'add']);
-Route::post('/evbs/event-types/create', [EventTypeController::class, 'create']);
-Route::get('/evbs/event-types', [EventTypeController::class, 'viewAll']);
-Route::get('/evbs/event-types/{eventType}/edit', [EventTypeController::class, 'edit']);
-Route::patch('/evbs/event-types/{eventType}/update', [EventTypeController::class, 'update']);
-Route::patch('/evbs/event-types/{eventType}/activate', [EventTypeController::class, 'activate']);
-Route::patch('/evbs/event-types/{eventType}/deactivate', [EventTypeController::class, 'deactivate']);
-Route::delete('/evbs/event-types/{eventType}/delete', [EventTypeController::class, 'delete']);
-
-// event venue
-Route::get('/evbs/event-venues/add', [EventVenueController::class, 'add']);
-Route::post('/evbs/event-venues/create', [EventVenueController::class, 'create']);
-Route::get('/evbs/event-venues', [EventVenueController::class, 'viewAll']);
-Route::get('/evbs/event-venues/{guest}', [EventVenueController::class, 'view']);
-Route::get('/evbs/event-venues/{eventVenue}/edit', [EventVenueController::class, 'edit']);
-Route::patch('/evbs/event-venues/{eventVenue}/update', [EventVenueController::class, 'update']);
-Route::patch('/evbs/event-venues/{eventVenue}/activate', [EventVenueController::class, 'activate']);
-Route::patch('/evbs/event-venues/{eventVenue}/deactivate', [EventVenueController::class, 'deactivate']);
-Route::delete('/evbs/event-venues/{eventVenue}/delete', [EventVenueController::class, 'delete']);
-
-// booking
-Route::get('/evbs/bookings/add', [BookingController::class, 'add']);
-Route::post('/evbs/bookings/create', [BookingController::class, 'create']);
-Route::get('/evbs/bookings', [BookingController::class, 'viewAll']);
-Route::get('/evbs/bookings/{booking}', [BookingController::class, 'view']);
-Route::get('/evbs/bookings/{booking}/edit', [BookingController::class, 'edit']);
-Route::patch('/evbs/bookings/{booking}/update', [BookingController::class, 'update']);
-Route::delete('/evbs/bookings/{booking}/delete', [BookingController::class, 'delete']);
 
 /* ========================================
 Event Venue Owner

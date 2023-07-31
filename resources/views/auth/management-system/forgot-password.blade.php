@@ -33,6 +33,7 @@
             @endif
 
             <span class="flex items-center mt-24 mb-6">
+                {{-- todo --}}
                 <img src="{{ asset('/assets/urban-space-logo-black.png') }}" alt="" style="width: 380px; height: 75px;">
             </span>
             

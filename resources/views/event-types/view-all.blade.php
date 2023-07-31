@@ -27,8 +27,8 @@
                 <table id="data-table" class="text-sm whitespace-nowrap">
                     <thead class="text-white bg-gray-700">
                         <tr>
-                            <th scope="col">Actions</th>
                             <th scope="col">No</th>
+                            <th scope="col">Actions</th>
                             <th scope="col">Event Type Name</th>
                             <th scope="col">Status</th>
                             <th scope="col">Created At</th>
@@ -41,6 +41,7 @@
 
                         @forelse ($eventTypes as $eventType)
                             <tr class="hover:bg-neutral-200 transition">
+                                <td>{{ $no }}</td>
                                 <td style="display: flex;">
                                     <a href="/evbs/event-types/{{ $eventType->id }}/edit"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-amber-500 hover:bg-amber-700 transition"><i class="bx bx-pencil"></i></button></a>
 
@@ -67,7 +68,6 @@
                                         <button type="submit" class="ml-2 p-1 w-10 text-lg text-white rounded-md bg-red-500 hover:bg-red-700 transition" id="delete-confirmation-{{ $no }}"><i class="bx bx-trash"></i></button>
                                     </form>
                                 </td>
-                                <td>{{ $no }}</td>
                                 <td>{{ $eventType->event_type_name }}</td>
                                 <td>
                                     @if ($eventType->status == 0)

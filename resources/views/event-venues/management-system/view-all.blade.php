@@ -14,7 +14,7 @@
     <div class="p-4 bg-white rounded-lg mt-2">
         <div class="grid grid-cols-2 mb-6 items-center">
             <div class="grid justify-items-start">
-                <h1 class="content-center text-2xl font-bold text-gray-800 mt-2 mb-2">Event Types</h1>
+                <h1 class="content-center text-2xl font-bold text-gray-800 mt-2 mb-2">Event Venues</h1>
             </div>
 
             <div class="grid justify-items-end">
@@ -27,9 +27,13 @@
                 <table id="data-table" class="text-sm whitespace-nowrap">
                     <thead class="text-white bg-gray-700">
                         <tr>
-                            <th scope="col">Actions</th>
                             <th scope="col">No</th>
-                            <th scope="col">Event Type Name</th>
+                            <th scope="col">Actions</th>
+                            <th scope="col">Event Venue Name</th>
+                            <th scope="col">Event Type</th>
+                            @if (session('user_role') == "Super Admin")
+                                <th scope="col">Event Venue Owner</th>
+                            @endif
                             <th scope="col">Status</th>
                             <th scope="col">Created At</th>
                             <th scope="col">Updated At</th>
@@ -41,7 +45,10 @@
 
                         @forelse ($eventVenues as $eventVenue)
                             <tr class="hover:bg-neutral-200 transition">
+                                <td>{{ $no }}</td>
                                 <td style="display: flex;">
+                                    <a href="/evbs/event-venues/{{ $eventVenue->id }}"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-blue-500 hover:bg-blue-700 transition"><i class="bx bx-info-circle"></i></button></a>
+                                    <span class="ml-2"></span>
                                     <a href="/evbs/event-venues/{{ $eventVenue->id }}/edit"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-amber-500 hover:bg-amber-700 transition"><i class="bx bx-pencil"></i></button></a>
 
                                     @if ($eventVenue->status == 0)
@@ -64,11 +71,17 @@
                                         @csrf
                                         @method('DELETE')
 
+                                        <input type="hidden" name="eventVenueImages" value="{{ $eventVenue->event_venue_images }}">
                                         <button type="submit" class="ml-2 p-1 w-10 text-lg text-white rounded-md bg-red-500 hover:bg-red-700 transition" id="delete-confirmation-{{ $no }}"><i class="bx bx-trash"></i></button>
                                     </form>
                                 </td>
-                                <td>{{ $no }}</td>
                                 <td>{{ $eventVenue->event_venue_name }}</td>
+                                <td>{{ $eventVenue->event_type_name }}</td>
+                                @if (session('user_role') == "Super Admin")
+                                    <td>
+                                        <a href="/evbs/event-venue-owners/{{ $eventVenue->event_venue_owner_id }}" class="hover:underline hover:text-teal-500 transition" target="_blank">{{ $eventVenue->first_name }} {{ $eventVenue->last_name }}</a>
+                                    </td>
+                                @endif
                                 <td>
                                     @if ($eventVenue->status == 0)
                                         <span class="p-1.5 text-sm font-medium text-white bg-red-500 rounded-md">Inactive</span>

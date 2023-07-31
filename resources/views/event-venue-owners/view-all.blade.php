@@ -27,8 +27,8 @@
                 <table id="data-table" class="text-sm whitespace-nowrap">
                     <thead class="text-white bg-gray-700">
                         <tr>
-                            <th scope="col">Actions</th>
                             <th scope="col">No</th>
+                            <th scope="col">Actions</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
                             <th scope="col">Phone Number</th>
@@ -43,6 +43,7 @@
 
                         @forelse ($eventVenueOwners as $eventVenueOwner)
                             <tr class="hover:bg-neutral-200 transition">
+                                <td>{{ $no }}</td>
                                 <td style="display: flex;">
                                     <a href="/evbs/event-venue-owners/{{ $eventVenueOwner->id }}"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-blue-500 hover:bg-blue-700 transition"><i class="bx bx-info-circle"></i></button></a>
                                     <span class="ml-2"></span>
@@ -71,7 +72,6 @@
                                         <button type="submit" class="ml-2 p-1 w-10 text-lg text-white rounded-md bg-red-500 hover:bg-red-700 transition" id="delete-confirmation-{{ $no }}"><i class="bx bx-trash"></i></button>
                                     </form>
                                 </td>
-                                <td>{{ $no }}</td>
                                 <td>{{ $eventVenueOwner->first_name }} {{ $eventVenueOwner->last_name }}</td>
                                 <td>
                                     <a href="mailto:{{ $eventVenueOwner->email }}" class="hover:underline hover:text-teal-500 transition">{{ $eventVenueOwner->email }}</a>

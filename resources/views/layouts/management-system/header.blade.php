@@ -23,6 +23,10 @@
     {{-- jquery datatable --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+    {{-- select2 css & js --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 </head>
 
 <style>
@@ -158,6 +162,7 @@
                         </button>
                         
                         <a href="/evbs/dashboard">
+                            {{-- todo --}}
                             <img class="cursor-pointer" src="{{ asset('/assets/urban-space-logo-black.png') }}" alt="" style="width: 200px; height: 38px;">
                         </a>
                     </div>
@@ -189,7 +194,7 @@
                         <form action="/evbs/logout" method="GET">
                             @csrf
 
-                            <a href="/evbs/logout" class="p-2.5 rounded-lg hover:bg-red-100 transition" id="logout-confirmation">
+                            <a href="/evbs/logout" class="p-2.5 rounded-lg hover:bg-red-100 transition" id="sign-out-confirmation">
                                 <span class="text-xl text-red-500"><i class="bx bx-log-out"></i></span>
                             </a>
                         </form>
@@ -211,6 +216,52 @@
                         <a href="/evbs/dashboard" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
                             <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-chart"></i></span>
                             <span class="text-sm font-medium ml-3">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <div class="mt-5"></div>
+
+                    <li class="px-3">
+                        <div class="flex flex-row items-center h-8">
+                            <div class="text-xs font-semibold tracking-wide text-gray-600">BOOKING MANAGEMENT</div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a href="/evbs/bookings/guest-bookings" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-notepad"></i></span>
+                            <span class="text-sm font-medium ml-3">Guest Booking</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/evbs/bookings/venue-blockings" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-calendar-x"></i></span>
+                            <span class="text-sm font-medium ml-3">Venue Blocking</span>
+                        </a>
+                    </li>
+
+                    <div class="mt-5"></div>
+
+                    <li class="px-3">
+                        <div class="flex flex-row items-center h-8">
+                            <div class="text-xs font-semibold tracking-wide text-gray-600">EVENT MANAGEMENT</div>
+                        </div>
+                    </li>
+
+                    @if (session('user_role') == "Super Admin")
+                        <li>
+                            <a href="/evbs/event-types" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-list-ul"></i></span>
+                                <span class="text-sm font-medium ml-3">Event Type</span>
+                            </a>
+                        </li>
+                    @endif
+                    
+                    <li>
+                        <a href="/evbs/event-venues" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-building-house"></i></span>
+                            <span class="text-sm font-medium ml-3">Event Venue</span>
                         </a>
                     </li>
 
@@ -244,45 +295,6 @@
                             </a>
                         </li>                        
                     @endif
-
-                    <div class="mt-5"></div>
-
-                    <li class="px-3">
-                        <div class="flex flex-row items-center h-8">
-                            <div class="text-xs font-semibold tracking-wide text-gray-600">EVENT MANAGEMENT</div>
-                        </div>
-                    </li>
-
-                    @if (session('user_role') == "Super Admin")
-                        <li>
-                            <a href="/evbs/event-types" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-list-ul"></i></span>
-                                <span class="text-sm font-medium ml-3">Event Type</span>
-                            </a>
-                        </li>
-                    @endif
-                    
-                    <li>
-                        <a href="/evbs/event-venues" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-building-house"></i></span>
-                            <span class="text-sm font-medium ml-3">Event Venue</span>
-                        </a>
-                    </li>
-
-                    <div class="mt-5"></div>
-
-                    <li class="px-3">
-                        <div class="flex flex-row items-center h-8">
-                            <div class="text-xs font-semibold tracking-wide text-gray-600">BOOKING MANAGEMENT</div>
-                        </div>
-                    </li>
-
-                    <li>
-                        <a href="/evbs/bookings" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-notepad"></i></span>
-                            <span class="text-sm font-medium ml-3">Booking</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
         </aside> {{-- end sidebar --}}

@@ -15,11 +15,11 @@
 
             <div class="grid grid-rows-2 text-right">
                 <div class="grid content-end">
-                    <label for="totalBookings" class="p-2 text-md font-medium text-gray-600">Total Bookings</label>
+                    <label for="totalBookings" class="p-2 text-md font-medium text-gray-600">Total Guest Bookings</label>
                 </div>
 
                 <div class="grid content-start">
-                    <label for="totalBookings" class="p-2 text-2xl font-bold text-gray-800">{{ $totalBookings }}</label>
+                    <label for="totalBookings" class="p-2 text-2xl font-bold text-gray-800">{{ $totalGuestBookings }}</label>
                 </div>
             </div>
         </div>

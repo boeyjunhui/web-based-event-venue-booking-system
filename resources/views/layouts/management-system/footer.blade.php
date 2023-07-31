@@ -61,7 +61,107 @@
                 showCancelButton: true,
                 color: '#1f2937',
                 confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
+                cancelButtonColor: '#14b8a6',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        })
+    </script>
+
+    {{-- cancel guest booking confirmation --}}
+    <script>
+        document.getElementById('cancel-guest-booking-confirmation')?.addEventListener('click', function () {
+            var form = $(this).closest("form");
+            event.preventDefault();
+
+            Swal.fire({
+                titleText: 'Cancel Guest Booking',
+                text: "Are you sure you want to cancel this guest booking?",
+                icon: 'warning',
+                showConfirmButton: true,
+                showCancelButton: true,
+                color: '#1f2937',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#14b8a6',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        })
+    </script>
+
+    {{-- cancel venue blocking confirmation --}}
+    <script>
+        document.getElementById('cancel-venue-blocking-confirmation')?.addEventListener('click', function () {
+            var form = $(this).closest("form");
+            event.preventDefault();
+
+            Swal.fire({
+                titleText: 'Cancel Venue Blocking',
+                text: "Are you sure you want to cancel this venue blocking?",
+                icon: 'warning',
+                showConfirmButton: true,
+                showCancelButton: true,
+                color: '#1f2937',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#14b8a6',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        })
+    </script>
+
+    {{-- delete image confirmation --}}
+    <script>
+        document.getElementById('delete-image-confirmation')?.addEventListener('click', function () {
+            var form = $(this).closest("form");
+            event.preventDefault();
+
+            Swal.fire({
+                titleText: 'Delete',
+                text: "Are you sure you want to delete this image?",
+                icon: 'warning',
+                showConfirmButton: true,
+                showCancelButton: true,
+                color: '#1f2937',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#14b8a6',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        })
+    </script>
+    
+    {{-- delete all images confirmation --}}
+    <script>
+        document.getElementById('delete-all-images-confirmation')?.addEventListener('click', function () {
+            var form = $(this).closest("form");
+            event.preventDefault();
+
+            Swal.fire({
+                titleText: 'Delete',
+                text: "Are you sure you want to delete all images?",
+                icon: 'warning',
+                showConfirmButton: true,
+                showCancelButton: true,
+                color: '#1f2937',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#14b8a6',
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No'
             }).then((result) => {
@@ -97,9 +197,9 @@
         })
     </script>
 
-    {{-- logout confirmation --}}
+    {{-- sign out confirmation --}}
     <script>
-        document.getElementById('logout-confirmation')?.addEventListener('click', function () {
+        document.getElementById('sign-out-confirmation')?.addEventListener('click', function () {
             var form = $(this).closest("form");
             event.preventDefault();
 
