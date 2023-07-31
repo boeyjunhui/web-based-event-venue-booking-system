@@ -17,6 +17,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\EventVenueController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\SNSController;
 
 /*
 |--------------------------------------------------------------------------
@@ -167,3 +168,10 @@ Guest
 
 // booking
 
+//todo testing
+// Route::post('/execute-controller', 'SNSController@sendSMS')->name('execute-controller');
+
+
+// Route::post('/aaa', [SNSController::class, 'sendSMS']);
+
+Route::get('/sms', [SNSController::class, 'sendSMS']);

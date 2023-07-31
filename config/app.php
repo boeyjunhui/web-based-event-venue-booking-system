@@ -156,18 +156,23 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
-        /*
-         * Package Service Providers...
-         */
+            /*
+             * Package Service Providers...
+             */
 
-        /*
-         * Application Service Providers...
-         */
+            /*
+             * Application Service Providers...
+             */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+            // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+        //todo
+        // App\Providers\AWSSNSServiceProvider::class,
+        Aws\Laravel\AwsServiceProvider::class,
+
     ])->toArray(),
 
     /*
@@ -183,6 +188,31 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        // 'aws' => Aws\Laravel\AwsFacade::class,
+        //todo 
+        'AWS' => Aws\Laravel\AwsFacade::class,
+
     ])->toArray(),
+
+
+    /**
+     * 
+     * aws sns
+     * 
+     * 
+     */
+    // 'providers' => [
+    //         // Other Service Providers...
+
+    //         App\Providers\AwsServiceProvider::class,
+    //     ],
+    // 'aws' => [
+    //     'key' => env('AWS_ACCESS_KEY_ID'),
+    //     'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    //     'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    //     'version' => 'latest',
+    // ],
+
+    
 
 ];
