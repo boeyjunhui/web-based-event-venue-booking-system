@@ -163,14 +163,15 @@ return [
             /*
              * Application Service Providers...
              */
+        Napp\Xray\XrayServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
             // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        //todo
-        // App\Providers\AWSSNSServiceProvider::class,
+            //todo
+            // App\Providers\AWSSNSServiceProvider::class,
         Aws\Laravel\AwsServiceProvider::class,
 
     ])->toArray(),
@@ -191,7 +192,7 @@ return [
         // 'aws' => Aws\Laravel\AwsFacade::class,
         //todo 
         'AWS' => Aws\Laravel\AwsFacade::class,
-
+        'Xray' => \Napp\Xray\Facades\Xray::class,
     ])->toArray(),
 
 
@@ -213,6 +214,6 @@ return [
     //     'version' => 'latest',
     // ],
 
-    
+
 
 ];
