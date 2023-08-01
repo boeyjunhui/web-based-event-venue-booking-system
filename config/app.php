@@ -192,7 +192,7 @@ return [
         // 'aws' => Aws\Laravel\AwsFacade::class,
         //todo 
         'AWS' => Aws\Laravel\AwsFacade::class,
-        'Xray' => \Napp\Xray\Facades\Xray::class,
+        // 'Xray' => \Napp\Xray\Facades\Xray::class,
     ])->toArray(),
 
 
