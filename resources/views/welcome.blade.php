@@ -8,6 +8,7 @@
     <title>Laravel</title>
 
     {{-- tailwind css --}}
+    {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
     @vite('resources/css/app.css')
 
     <!-- Fonts -->
@@ -15,7 +16,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
     <!-- Styles -->
-    <style>
+    {{-- <style>
         /* ! tailwindcss v3.2.4 | MIT License | https://tailwindcss.com */
         *,
         ::after,
@@ -830,7 +831,7 @@
                 padding: 2rem
             }
         }
-    </style>
+    </style> --}}
 </head>
 
 <body class="antialiased">
@@ -841,7 +842,22 @@
         <div class="  bg-red-50">
 
 
+            {{-- todo this is image file from s3 --}}
+            <img src="https://ddac-assignment-1.s3.amazonaws.com/urban-space-logo-white.png" alt="log">
 
+            {{-- todo form that upload file to s3 --}}
+            <form action="{{ route('upload') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file">
+                <button type="submit">Upload</button>
+            </form>
+            @if (session('success'))
+                <div>{{ session('success') }}</div>
+            @endif
+
+            @if (session('error'))
+                <div>{{ session('error') }}</div>
+            @endif
 
 
             <?php
@@ -858,6 +874,7 @@
             // use App\Http\Controllers\SNSController;
             // $smsController = new SNSController();
             // $smsController->sendSMS();
+            
             ?>
 
         </div>

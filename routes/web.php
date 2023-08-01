@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -175,3 +176,6 @@ Guest
 // Route::post('/aaa', [SNSController::class, 'sendSMS']);
 
 Route::get('/sms', [SNSController::class, 'sendSMS']);
+
+// Route::post('/upload', 'UploadController@upload')->name('upload');
+Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
