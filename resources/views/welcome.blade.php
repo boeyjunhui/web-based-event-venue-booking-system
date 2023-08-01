@@ -9,14 +9,14 @@
 
     {{-- tailwind css --}}
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
-    @vite('resources/css/app.css')
+    {{-- @vite('resources/css/app.css') --}}
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
     <!-- Styles -->
-    {{-- <style>
+    <style>
         /* ! tailwindcss v3.2.4 | MIT License | https://tailwindcss.com */
         *,
         ::after,
@@ -831,7 +831,7 @@
                 padding: 2rem
             }
         }
-    </style> --}}
+    </style>
 </head>
 
 <body class="antialiased">

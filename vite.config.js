@@ -11,8 +11,8 @@ export default defineConfig({
       refresh: true,
     }),
   ],
-  build: {
-    manifest: true,
-    // base: '/public/', // Specify the public path here
-  },
+//   build: {
+//     manifest: true,
+//      base: '/public/', // Specify the public path here
+//   },
 });
