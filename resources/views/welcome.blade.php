@@ -17,12 +17,17 @@
 
     {{-- ?for xray --}}
     @php
+        Xray::addSegment('MyCustomLogic');
+
+
+    @endphp
+    {{-- @php
 \Pkerrigan\Xray\Trace::getInstance()
     ->setName('my-app')
     ->setUrl('http:/ss')
     ->setMethod('GET')
     ->begin(10);
-    @endphp
+    @endphp --}}
     {{-- @php
         use Pkerrigan\Xray\Trace;
         use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
@@ -852,7 +857,29 @@
     </style>
 </head>
 
+@php
+        use Pkerrigan\Xray\Trace;
+        use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
+        use Pkerrigan\Xray\SqlSegment;
+        use Pkerrigan\Xray\RemoteSegment;
+        use Pkerrigan\Xray\HttpSegment;
+    Trace::getInstance()
+    ->setTraceHeader($_SERVER['HTTP_X_AMZN_TRACE_ID'] ?? null)
+    ->setName('app.example.com')
+    ->setUrl('http://ssq21222')
+    ->setMethod('GET')
+    ->begin(); 
+
+sleep(1); // give x-ray something to actually measure
+
+Trace::getInstance()
+    ->end()
+    ->setResponseCode(http_response_code())
+    ->submit(new DaemonSegmentSubmitter());
+@endphp
+
 <body class="antialiased">
+
 
     <div
         class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
@@ -896,14 +923,14 @@
 
 
     </div>
-    @php
+    {{-- @php
         \Pkerrigan\Xray\Trace::getInstance()
     ->end()
     ->setResponseCode(http_response_code())
     // ->setError(http_response_code() >= 400 && http_response_code() < 500)
     // ->setFault(http_response_code() >= 500)
     ->submit(new \Pkerrigan\Xray\Submission\DaemonSegmentSubmitter());
-    @endphp
+    @endphp --}}
     {{-- @php
         Trace::getInstance()
             ->getCurrentSegment()
@@ -917,4 +944,9 @@
 
 </body>
 
+@php
+    // run your code
+
+Xray::endSegment('MyCustomLogic');
+@endphp
 </html>

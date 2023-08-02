@@ -14,6 +14,7 @@
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.15",
+        "napp/xray-laravel": "^1.4",
         "pkerrigan/xray": "^1"
     },
     "require-dev": {

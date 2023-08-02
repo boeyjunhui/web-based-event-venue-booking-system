@@ -18,9 +18,9 @@ class UploadController extends Controller
     {
 
         // Xray::addSegment('MyCustomLogic');
-        Trace::getInstance()
-        ->getCurrentSegment()
-        ->addSubsegment((new RemoteSegment())->setName('S3imageload')->begin());
+        // Trace::getInstance()
+        // ->getCurrentSegment()
+        // ->addSubsegment((new RemoteSegment())->setName('S3imageload')->begin());
         $request->validate([
             'file' => 'required|mimes:jpeg,png,pdf|max:2048', // Adjust the allowed file types and size as needed
         ]);
@@ -51,14 +51,14 @@ class UploadController extends Controller
             // run your code
 
             //   Xray::endSegment('MyCustomLogic');
-            Trace::getInstance()
-            ->getCurrentSegment()
-            ->end();
-        
-        Trace::getInstance()
-            ->end()
-            ->setResponseCode(http_response_code())
-            ->submit(new DaemonSegmentSubmitter());
+            //     Trace::getInstance()
+            //     ->getCurrentSegment()
+            //     ->end();
+
+            // Trace::getInstance()
+            //     ->end()
+            //     ->setResponseCode(http_response_code())
+            //     ->submit(new DaemonSegmentSubmitter());
             return redirect()->back()->with('success', 'File uploaded successfully. File path: ' . $url);
         }
 
