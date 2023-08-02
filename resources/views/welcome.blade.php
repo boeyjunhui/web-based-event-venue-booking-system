@@ -17,11 +17,14 @@
 
     {{-- ?for xray --}}
     @php
-\Pkerrigan\Xray\Trace::getInstance()
-    ->setName('my-app')
-    ->setUrl('http:/ss')
-    ->setMethod('GET')
-    ->begin(10);
+        // echo ' start start ';
+        
+        // \Pkerrigan\Xray\Trace::getInstance()
+        //     ->setName('my-app')
+        //     ->setUrl('http:/ss')
+        //     ->setMethod('GET')
+        //     ->begin();
+        // echo ' start ';
     @endphp
     {{-- @php
         use Pkerrigan\Xray\Trace;
@@ -852,6 +855,43 @@
     </style>
 </head>
 
+@php
+    echo 'test x ray start';
+    use Pkerrigan\Xray\Trace;
+use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
+use Pkerrigan\Xray\SqlSegment;
+Trace::getInstance()
+    ->setTraceHeader($_SERVER['HTTP_X_AMZN_TRACE_ID'] ?? null)
+    ->setName('app.example.com')
+    ->setUrl($_SERVER['REQUEST_URI'])
+    ->setMethod($_SERVER['REQUEST_METHOD'])
+    ->begin(); 
+
+sleep(1); // give x-ray something to actually measure
+
+Trace::getInstance()
+    ->getCurrentSegment()
+    ->addSubsegment(
+        (new SqlSegment())
+        ->setName('db.example.com')
+        ->setDatabaseType('PostgreSQL')
+        ->setQuery('ssssss') // Make sure to remove sensitive data before passing in a query
+        ->begin()
+    );
+// Run your query here
+Trace::getInstance()
+    ->getCurrentSegment()
+    ->end();
+
+Trace::getInstance()
+    ->end()
+    ->setResponseCode(http_response_code())
+    ->submit(new DaemonSegmentSubmitter());
+
+    echo 'test x ray end';
+
+@endphp
+
 <body class="antialiased">
 
     <div
@@ -896,14 +936,18 @@
 
 
     </div>
-    @php
+    {{-- @php
+        // echo ' start end ';
+        
         \Pkerrigan\Xray\Trace::getInstance()
-    ->end()
-    ->setResponseCode(http_response_code())
-    // ->setError(http_response_code() >= 400 && http_response_code() < 500)
-    // ->setFault(http_response_code() >= 500)
-    ->submit(new \Pkerrigan\Xray\Submission\DaemonSegmentSubmitter());
-    @endphp
+            ->end()
+            ->setResponseCode(http_response_code())
+            ->setError(http_response_code() >= 400 && http_response_code() < 500)
+            ->setFault(http_response_code() >= 500)
+            ->submit(new \Pkerrigan\Xray\Submission\DaemonSegmentSubmitter());
+        // echo ' end  ';
+        
+    @endphp --}}
     {{-- @php
         Trace::getInstance()
             ->getCurrentSegment()

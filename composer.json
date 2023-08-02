@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "aws/aws-sdk-php": "^3.277",
         "aws/aws-sdk-php-laravel": "~3",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/breeze": "^1.21",
