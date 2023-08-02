@@ -4,16 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Napp\Xray\Facades\Xray;
 // use Napp\Xray\Facades\Xray;
+// use Napp\Xray\Facades\Xray;
+use Pkerrigan\Xray\Trace;
+use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
+use Pkerrigan\Xray\SqlSegment;
+use Pkerrigan\Xray\RemoteSegment;
+use Pkerrigan\Xray\HttpSegment;
 
 class UploadController extends Controller
 {
     public function upload(Request $request)
     {
-        
-        Xray::addSegment('MyCustomLogic');
 
+        // Xray::addSegment('MyCustomLogic');
+        Trace::getInstance()
+        ->getCurrentSegment()
+        ->addSubsegment((new RemoteSegment())->setName('S3imageload')->begin());
         $request->validate([
             'file' => 'required|mimes:jpeg,png,pdf|max:2048', // Adjust the allowed file types and size as needed
         ]);
@@ -43,8 +50,15 @@ class UploadController extends Controller
             $url = $result['ObjectURL'];
             // run your code
 
-              Xray::endSegment('MyCustomLogic');
-
+            //   Xray::endSegment('MyCustomLogic');
+            Trace::getInstance()
+            ->getCurrentSegment()
+            ->end();
+        
+        Trace::getInstance()
+            ->end()
+            ->setResponseCode(http_response_code())
+            ->submit(new DaemonSegmentSubmitter());
             return redirect()->back()->with('success', 'File uploaded successfully. File path: ' . $url);
         }
 

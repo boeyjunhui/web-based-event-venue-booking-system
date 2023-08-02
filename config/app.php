@@ -163,7 +163,7 @@ return [
             /*
              * Application Service Providers...
              */
-        Napp\Xray\XrayServiceProvider::class, // here
+        // Napp\Xray\XrayServiceProvider::class, // here
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
             // App\Providers\BroadcastServiceProvider::class,
@@ -192,7 +192,7 @@ return [
         // 'aws' => Aws\Laravel\AwsFacade::class,
         //todo 
         'AWS' => Aws\Laravel\AwsFacade::class,
-        'Xray' => \Napp\Xray\Facades\Xray::class,
+        // 'Xray' => \Napp\Xray\Facades\Xray::class,
     ])->toArray(),
 
 

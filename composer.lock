@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "09ad8c9cfe520401b8c46b7b990c8191",
+    "content-hash": "09b921138bf673cd7a48146e8931536d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2333,65 +2333,6 @@
                 "source": "https://github.com/jmespath/jmespath.php/tree/2.6.1"
             },
             "time": "2021-06-14T00:11:39+00:00"
-        },
-        {
-            "name": "napp/xray-laravel",
-            "version": "1.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Napp/xray-laravel.git",
-                "reference": "93bb0710eafba9db94a42839451edf1d27ddd0e6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Napp/xray-laravel/zipball/93bb0710eafba9db94a42839451edf1d27ddd0e6",
-                "reference": "93bb0710eafba9db94a42839451edf1d27ddd0e6",
-                "shasum": ""
-            },
-            "require": {
-                "aws/aws-sdk-php": "^3.133",
-                "ext-json": "*",
-                "illuminate/console": "^6.0|^7.0|^8.0|^9.0|^10.0",
-                "illuminate/contracts": "^6.0|^7.0|^8.0|^9.0|^10.0",
-                "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0",
-                "php": "^7.2|^8.0|^8.1",
-                "pkerrigan/xray": "^1.2"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Napp\\Xray\\XrayServiceProvider"
-                    ],
-                    "aliases": {
-                        "Xray": "Napp\\Xray\\Facades\\Xray"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Napp\\Xray\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "AWS X-Ray for Laravel applications.",
-            "keywords": [
-                "laravel",
-                "php",
-                "tracing",
-                "xray"
-            ],
-            "support": {
-                "issues": "https://github.com/Napp/xray-laravel/issues",
-                "source": "https://github.com/Napp/xray-laravel/tree/1.4.2"
-            },
-            "time": "2023-04-03T18:07:10+00:00"
         },
         {
             "name": "nesbot/carbon",

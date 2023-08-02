@@ -15,6 +15,24 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
+    {{-- ?for xray --}}
+    @php
+\Pkerrigan\Xray\Trace::getInstance()
+    ->setName('my-app')
+    ->setUrl('http:/ss')
+    ->setMethod('GET')
+    ->begin(10);
+    @endphp
+    {{-- @php
+        use Pkerrigan\Xray\Trace;
+        use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
+        use Pkerrigan\Xray\SqlSegment;
+        use Pkerrigan\Xray\RemoteSegment;
+        use Pkerrigan\Xray\HttpSegment;
+        Trace::getInstance()
+            ->getCurrentSegment()
+            ->addSubsegment((new RemoteSegment())->setName('S3imageload')->begin());
+    @endphp --}}
     <!-- Styles -->
     <style>
         /* ! tailwindcss v3.2.4 | MIT License | https://tailwindcss.com */
@@ -835,13 +853,10 @@
 </head>
 
 <body class="antialiased">
+
     <div
         class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
-
-
         <div class="  bg-red-50">
-
-
             {{-- todo this is image file from s3 --}}
             <img src="https://ddac-assignment-1.s3.amazonaws.com/urban-space-logo-white.png" alt="log">
 
@@ -881,6 +896,25 @@
 
 
     </div>
+    @php
+        \Pkerrigan\Xray\Trace::getInstance()
+    ->end()
+    ->setResponseCode(http_response_code())
+    // ->setError(http_response_code() >= 400 && http_response_code() < 500)
+    // ->setFault(http_response_code() >= 500)
+    ->submit(new \Pkerrigan\Xray\Submission\DaemonSegmentSubmitter());
+    @endphp
+    {{-- @php
+        Trace::getInstance()
+            ->getCurrentSegment()
+            ->end();
+        
+        Trace::getInstance()
+            ->end()
+            ->setResponseCode(http_response_code())
+            ->submit(new DaemonSegmentSubmitter());
+    @endphp --}}
+
 </body>
 
 </html>
