@@ -65,7 +65,7 @@
                         
                     @endforelse
                 @elseif ($eventVenues->isEmpty())
-                        <p class="font-bold text-lg text-gray-800 mt-12">No event venues found.</p>
+                        <p class="font-bold text-lg text-gray-800 mt-12">No event venues available.</p>
                 @endif
             </div>
         </div>

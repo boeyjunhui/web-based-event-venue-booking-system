@@ -529,16 +529,9 @@ class EventVenueController extends Controller
             ->orderBy('event_types.created_at', 'asc')
             ->get();
 
-        $firstEventTypeID = DB::table('event_types')
-            ->select('event_types.id')
-            ->where('event_types.status', 1)
-            ->orderBy('event_types.created_at', 'asc')
-            ->first();
-
         $eventVenues = DB::table('event_venues')
             ->select('event_venues.id', 'event_venues.event_venue_name', 'event_venues.city', 'event_venues.maximum_guests', 'event_venues.event_venue_images', 'event_types.event_type_name')
             ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
-            ->where('event_venues.event_type_id', $firstEventTypeID->id)
             ->where('event_venues.status', 1)
             ->orderBy('event_venues.created_at', 'asc')
             ->get();
