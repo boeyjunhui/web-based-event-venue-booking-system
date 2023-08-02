@@ -72,6 +72,56 @@
         })
     </script>
 
+    {{-- confirm guest booking confirmation --}}
+    <script>
+        document.getElementById('confirm-guest-booking-confirmation')?.addEventListener('click', function () {
+            var form = $(this).closest("form");
+            event.preventDefault();
+
+            Swal.fire({
+                titleText: 'Confirm Guest Booking',
+                text: "Are you sure you want to confirm this guest booking?",
+                icon: 'warning',
+                showConfirmButton: true,
+                showCancelButton: true,
+                color: '#1f2937',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#14b8a6',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        })
+    </script>
+
+    {{-- confirm venue blocking confirmation --}}
+    <script>
+        document.getElementById('confirm-venue-blocking-confirmation')?.addEventListener('click', function () {
+            var form = $(this).closest("form");
+            event.preventDefault();
+
+            Swal.fire({
+                titleText: 'Confirm Venue Blocking',
+                text: "Are you sure you want to confirm this venue blocking?",
+                icon: 'warning',
+                showConfirmButton: true,
+                showCancelButton: true,
+                color: '#1f2937',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#14b8a6',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        })
+    </script>
+
     {{-- cancel guest booking confirmation --}}
     <script>
         document.getElementById('cancel-guest-booking-confirmation')?.addEventListener('click', function () {

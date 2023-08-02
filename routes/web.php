@@ -9,7 +9,6 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\EventVenueOwnerController;
@@ -80,6 +79,8 @@ Route::get('/evbs/bookings/{booking}/edit-guest-booking', [BookingController::cl
 Route::get('/evbs/bookings/{booking}/edit-venue-blocking', [BookingController::class, 'editVenueBlocking']);
 Route::patch('/evbs/bookings/{booking}/update-guest-booking', [BookingController::class, 'updateGuestBooking']);
 Route::patch('/evbs/bookings/{booking}/update-venue-blocking', [BookingController::class, 'updateVenueBlocking']);
+Route::patch('/evbs/bookings/{booking}/confirm-guest-booking', [BookingController::class, 'confirmGuestBooking']);
+Route::patch('/evbs/bookings/{booking}/confirm-venue-blocking', [BookingController::class, 'confirmVenueBlocking']);
 Route::patch('/evbs/bookings/{booking}/cancel-guest-booking', [BookingController::class, 'cancelGuestBooking']);
 Route::patch('/evbs/bookings/{booking}/cancel-venue-blocking', [BookingController::class, 'cancelVenueBlocking']);
 Route::delete('/evbs/bookings/{booking}/delete-guest-booking', [BookingController::class, 'deleteGuestBooking']);
@@ -151,31 +152,44 @@ Route::delete('/evbs/guests/{guest}/delete', [GuestController::class, 'delete'])
 Event Venue Owner
 ======================================== */
 // register account
-
+Route::get('/event-venue-owner/register', [RegisterController::class, 'displayEventVenueOwnerRegistrationForm']);
+Route::post('/event-venue-owner/register', [RegisterController::class, 'eventVenueOwnerAccountRegistration']);
 
 /* ========================================
 Guest
 ======================================== */
-// login
+// register account
+Route::get('/register', [RegisterController::class, 'displayGuestRegistrationForm']);
+Route::post('/register', [RegisterController::class, 'guestAccountRegistration']);
 
+// login
+Route::get('/login', [LoginController::class, 'displayGuestLoginForm']);
+Route::post('/login', [LoginController::class, 'guestLogin']);
 
 // logout
-
-
-// register account
-
+Route::get('/logout', [LogoutController::class, 'guestLogout']);
 
 // forgot password & reset password
-
-
-// homepage
-
+Route::get('/forgot-password', [ForgotPasswordController::class, 'displayGuestForgotPasswordForm']);
+Route::post('/forgot-password', [ForgotPasswordController::class, 'guestForgotPassword']);
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'displayGuestResetPasswordForm'])->name('displayGuestResetPasswordForm');
+Route::post('/reset-password', [ForgotPasswordController::class, 'guestResetPassword']);
 
 // profile
+Route::get('/profile', [ProfileController::class, 'viewGuestProfile']);
+Route::get('/profile/edit-profile', [ProfileController::class, 'editGuestProfile']);
+Route::patch('/profile/update-profile', [ProfileController::class, 'updateGuestProfile']);
+Route::get('/profile/change-password', [ProfileController::class, 'editGuestPassword']);
+Route::patch('/profile/update-password', [ProfileController::class, 'updateGuestPassword']);
 
-
-// event venue
-
+// home & event venue
+Route::get('/', [EventVenueController::class, 'viewEventVenue']);
+Route::get('/event-type', [EventVenueController::class, 'viewSpecificEventTypeVenue']);
+Route::get('/event-venue', [EventVenueController::class, 'searchEventVenue']);
 
 // booking
-
+Route::get('/make-booking/{eventVenue}', [BookingController::class, 'makeBooking']);
+Route::post('/place-booking', [BookingController::class, 'placeBooking']);
+Route::get('/bookings', [BookingController::class, 'viewAllBookings']);
+Route::get('/bookings/{booking}', [BookingController::class, 'viewBooking']);
+Route::patch('/cancel-booking/{booking}', [BookingController::class, 'cancelBooking']);

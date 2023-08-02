@@ -194,11 +194,16 @@ class ProfileController extends Controller
     {
         if (session('user_role') != "Guest") {
             return redirect('/login');
+        } else {
+            $guestID = session('user')->id;
+
+            $guest = DB::table('guests')
+                ->select('guests.*')
+                ->where('guests.id', $guestID)
+                ->first();
+
+            return view('profile.booking-system.view', compact('guest'));
         }
-
-        $userID = session('user')->id;
-
-        //
     }
 
     // display edit form
@@ -206,11 +211,16 @@ class ProfileController extends Controller
     {
         if (session('user_role') != "Guest") {
             return redirect('/login');
+        } else {
+            $guestID = session('user')->id;
+
+            $guest = DB::table('guests')
+                ->select('guests.*')
+                ->where('guests.id', $guestID)
+                ->first();
+
+            return view('profile.booking-system.edit', compact('guest'));
         }
-
-        $userID = session('user')->id;
-
-        //
     }
 
     // update new data to database
@@ -218,11 +228,28 @@ class ProfileController extends Controller
     {
         if (session('user_role') != "Guest") {
             return redirect('/login');
+        } else {
+            $request->validate([
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'email' => 'required|email',
+                'phoneNumber' => 'required'
+            ]);
+
+            $guestID = session('user')->id;
+
+            DB::table('guests')
+                ->where('guests.id', $guestID)
+                ->update([
+                    'first_name' => $request->firstName,
+                    'last_name' => $request->lastName,
+                    'email' => $request->email,
+                    'phone_number' => $request->phoneNumber,
+                    'updated_at' => now()
+                ]);
+
+            return redirect('/profile')->with('success', 'Profile updated successfully!');
         }
-
-        $userID = session('user')->id;
-
-        //
     }
 
     // display edit password form
@@ -230,11 +257,16 @@ class ProfileController extends Controller
     {
         if (session('user_role') != "Guest") {
             return redirect('/login');
+        } else {
+            $guestID = session('user')->id;
+
+            $guest = DB::table('guests')
+                ->select('guests.*')
+                ->where('guests.id', $guestID)
+                ->first();
+
+            return view('profile.booking-system.edit-password', compact('guest'));
         }
-
-        $userID = session('user')->id;
-
-        //
     }
 
     // update new password to database
@@ -242,10 +274,30 @@ class ProfileController extends Controller
     {
         if (session('user_role') != "Guest") {
             return redirect('/login');
+        } else {
+            $request->validate(
+                [
+                    'password' => 'required|min:8|confirmed',
+                    'password_confirmation' => 'required'
+                ],
+                [
+                    'password.required' => 'The new password field is required.',
+                    'password.min' => 'The new password field must be at least 8 characters.',
+                    'password.confirmed' => 'The new password does not match.',
+                    'password_confirmation.required' => 'The new confirm password field is required.'
+                ]
+            );
+
+            $guestID = session('user')->id;
+
+            DB::table('guests')
+                ->where('guests.id', $guestID)
+                ->update([
+                    'password' => Hash::make($request->password),
+                    'updated_at' => now()
+                ]);
+
+            return redirect('/profile')->with('success', 'Password changed successfully!');
         }
-
-        $userID = session('user')->id;
-
-        //
     }
 }

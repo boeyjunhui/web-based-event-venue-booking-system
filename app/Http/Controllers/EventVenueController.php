@@ -93,6 +93,7 @@ class EventVenueController extends Controller
                 foreach ($request->eventVenueImages as $image) {
                     $randomString = Str::random(30);
                     $eventVenueImagesFilename = $randomString . '.' . $image->getClientOriginalExtension();
+                    // todo
                     $image->move(public_path('/uploads/event-venues'), $eventVenueImagesFilename);
                     $combinedEventVenueImages[] = $eventVenueImagesFilename;
                 }
@@ -522,12 +523,72 @@ class EventVenueController extends Controller
     // view event venue
     public function viewEventVenue()
     {
-        //
+        $eventTypes = DB::table('event_types')
+            ->select('event_types.*')
+            ->where('event_types.status', 1)
+            ->orderBy('event_types.created_at', 'asc')
+            ->get();
+
+        $firstEventTypeID = DB::table('event_types')
+            ->select('event_types.id')
+            ->where('event_types.status', 1)
+            ->orderBy('event_types.created_at', 'asc')
+            ->first();
+
+        $eventVenues = DB::table('event_venues')
+            ->select('event_venues.id', 'event_venues.event_venue_name', 'event_venues.city', 'event_venues.maximum_guests', 'event_venues.event_venue_images', 'event_types.event_type_name')
+            ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
+            ->where('event_venues.event_type_id', $firstEventTypeID->id)
+            ->where('event_venues.status', 1)
+            ->orderBy('event_venues.created_at', 'asc')
+            ->get();
+
+        return view('event-venues.booking-system.view-all', compact('eventTypes', 'eventVenues'));
+    }
+
+    // view specific event type's event venue
+    public function viewSpecificEventTypeVenue(Request $request)
+    {
+        $eventTypes = DB::table('event_types')
+            ->select('event_types.*')
+            ->where('event_types.status', 1)
+            ->orderBy('event_types.created_at', 'asc')
+            ->get();
+
+        $eventType = $request->eventType;
+
+        $eventVenues = DB::table('event_venues')
+            ->select('event_venues.id', 'event_venues.event_venue_name', 'event_venues.city', 'event_venues.maximum_guests', 'event_venues.event_venue_images', 'event_types.event_type_name')
+            ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
+            ->where('event_venues.event_type_id', $eventType)
+            ->where('event_venues.status', 1)
+            ->orderBy('event_venues.created_at', 'asc')
+            ->get();
+
+        return view('event-venues.booking-system.view-all', compact('eventTypes', 'eventVenues'));
     }
 
     // search event venue
-    public function searchEventVenue()
+    public function searchEventVenue(Request $request)
     {
-        //
+        $eventTypes = DB::table('event_types')
+            ->select('event_types.*')
+            ->where('event_types.status', 1)
+            ->orderBy('event_types.created_at', 'asc')
+            ->get();
+
+        $search = $request->search;
+
+        $eventVenues = DB::table('event_venues')
+            ->select('event_venues.id', 'event_venues.event_venue_name', 'event_venues.city', 'event_venues.maximum_guests', 'event_venues.event_venue_images', 'event_types.event_type_name')
+            ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
+            ->where('event_venues.event_venue_name', 'like', "%{$search}%")
+            ->orWhere('event_venues.city', 'like', "%{$search}%")
+            ->orWhere('event_venues.state', 'like', "%{$search}%")
+            ->where('event_venues.status', 1)
+            ->orderBy('event_venues.created_at', 'asc')
+            ->get();
+
+        return view('event-venues.booking-system.view-all', compact('eventTypes', 'eventVenues'));
     }
 }

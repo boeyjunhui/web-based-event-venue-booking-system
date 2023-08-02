@@ -22,6 +22,8 @@
                     @if ($venueBlocking->status == 0)
                         <span class="p-1.5 text-sm font-medium text-white bg-red-500 rounded-lg">Cancelled</span>
                     @elseif ($venueBlocking->status == 1)
+                        <span class="p-1.5 text-sm font-medium text-white bg-gray-500 rounded-lg">Pending</span>
+                    @elseif ($venueBlocking->status == 2)
                         <span class="p-1.5 text-sm font-medium text-white bg-teal-500 rounded-lg">Confirmed</span>
                     @endif
                 </span>
@@ -31,7 +33,7 @@
         <div class="grid grid-cols-2 gap-4 mt-4 mb-2">
             <div class="grid grid-cols-2 gap-2">
                 <label for="eventVenue" class="p-2 font-bold text-gray-800">Event Venue</label>
-                <label for="eventVenue" class="p-2 font-medium text-justify text-gray-800">
+                <label for="eventVenue" class="p-2 font-medium text-gray-800">
                     <a href="/evbs/event-venues/{{ $venueBlocking->event_venue_id }}" class="hover:underline hover:text-teal-500 transition" target="_blank">{{ $venueBlocking->event_venue_name }}</a>
                 </label>
             </div>
@@ -40,37 +42,44 @@
         <div class="grid grid-cols-2 gap-4 mb-2">
             <div class="grid grid-cols-2 gap-2">
                 <label for="startDate" class="p-2 font-bold text-gray-800">Start Date</label>
-                <label for="startDate" class="p-2 font-medium text-justify text-gray-800">{{ $venueBlocking->start_date }}</label>
+                <label for="startDate" class="p-2 font-medium text-gray-800">{{ $venueBlocking->start_date }}</label>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
                 <label for="endDate" class="p-2 font-bold text-gray-800">End Date</label>
-                <label for="endDate" class="p-2 font-medium text-justify text-gray-800">{{ $venueBlocking->end_date }}</label>
+                <label for="endDate" class="p-2 font-medium text-gray-800">{{ $venueBlocking->end_date }}</label>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-2">
             <div class="grid grid-cols-2 gap-2">
                 <label for="startTime" class="p-2 font-bold text-gray-800">Start Time</label>
-                <label for="startTime" class="p-2 font-medium text-justify text-gray-800">{{ $venueBlocking->start_time }}</label>
+                <label for="startTime" class="p-2 font-medium text-gray-800">{{ $venueBlocking->start_time }}</label>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
                 <label for="endTime" class="p-2 font-bold text-gray-800">End Time</label>
-                <label for="endTime" class="p-2 font-medium text-justify text-gray-800">{{ $venueBlocking->end_time }}</label>
+                <label for="endTime" class="p-2 font-medium text-gray-800">{{ $venueBlocking->end_time }}</label>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="grid grid-cols-2 gap-4 mb-2">
             <div class="grid grid-cols-2 gap-2">
                 <label for="remarks" class="p-2 font-bold text-gray-800">Remarks</label>
                 <label for="remarks" class="p-2 font-medium text-gray-800">{{ $venueBlocking->remarks }}</label>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 justify-center gap-8 mt-20 mb-6" style="display: flex;">
-            @if ($venueBlocking->status == 1)
+        @if ($venueBlocking->status == 1)
+            <div class="grid grid-cols-1 justify-center gap-8 mt-20 mb-6" style="display: flex;">
                 <a href="/evbs/bookings/{{ $venueBlocking->id }}/edit-venue-blocking"><button type="submit" class="p-2 w-40 text-sm text-white rounded-md bg-teal-500 hover:bg-teal-700 transition">Edit</button></a>
+
+                <form action="/evbs/bookings/{{ $venueBlocking->id }}/confirm-venue-blocking" method="POST">
+                    @csrf
+                    @method('PATCH')
+
+                    <button type="submit" class="p-2 w-40 text-sm text-white rounded-lg bg-green-500 hover:bg-green-700 transition" id="confirm-venue-blocking-confirmation">Confirm Blocking</button>
+                </form>
 
                 <form action="/evbs/bookings/{{ $venueBlocking->id }}/cancel-venue-blocking" method="POST">
                     @csrf
@@ -85,7 +94,7 @@
     
                     <button type="submit" class="p-2 w-40 text-sm text-white rounded-lg bg-red-500 hover:bg-red-700 transition" id="delete-confirmation">Delete</button>
                 </form>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
 @endsection

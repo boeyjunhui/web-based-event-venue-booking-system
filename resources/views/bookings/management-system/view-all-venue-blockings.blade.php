@@ -49,7 +49,7 @@
                                 <td style="display: flex;">
                                     <a href="/evbs/bookings/venue-blocking/{{ $venueBlocking->id }}"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-blue-500 hover:bg-blue-700 transition"><i class="bx bx-info-circle"></i></button></a>
 
-                                    @if ($venueBlocking->status != 0)
+                                    @if ($venueBlocking->status == 1)
                                         <span class="ml-2"></span>
                                         <a href="/evbs/bookings/{{ $venueBlocking->id }}/edit-venue-blocking"><button type="submit" class="p-1 w-10 text-lg text-white rounded-md bg-amber-500 hover:bg-amber-700 transition"><i class="bx bx-pencil"></i></button></a>
 
@@ -72,6 +72,8 @@
                                     @if ($venueBlocking->status == 0)
                                         <span class="p-1.5 text-sm font-medium text-white bg-red-500 rounded-md">Cancelled</span>
                                     @elseif ($venueBlocking->status == 1)
+                                        <span class="p-1.5 text-sm font-medium text-white bg-gray-500 rounded-md">Pending</span>
+                                    @elseif ($venueBlocking->status == 2)
                                         <span class="p-1.5 text-sm font-medium text-white bg-teal-500 rounded-md">Confirmed</span>
                                     @endif
                                 </td>

@@ -129,7 +129,29 @@ class LoginController extends Controller
         if (session('user_role') == "Guest") {
             return redirect('/');
         } else {
-            //
+            $this->validate($request, [
+                'email' => 'required|email',
+                'password' => 'required|min:8'
+            ]);
+
+            $guest = DB::table("guests")
+                ->select('guests.*')
+                ->where('guests.email', $request->email)
+                ->where('guests.status', 1)
+                ->first();
+
+            if ($guest) {
+                if (Auth::guard('guest')->attempt($request->only(['email', 'password']), $request->get('remember'))) {
+                    session(['user_role' => 'Guest']);
+                    session(['user' => $guest]);
+
+                    return redirect()->intended('/');
+                } else {
+                    return back()->withInput($request->only('email', 'remember'))->withErrors(['password' => ['The password does not match.']]);
+                }
+            } else {
+                return back()->withInput($request->only('email', 'remember'))->withErrors(['email' => ['This email does not exist.']]);
+            }
         }
     }
 }

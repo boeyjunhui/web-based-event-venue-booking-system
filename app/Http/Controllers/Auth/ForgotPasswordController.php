@@ -71,14 +71,12 @@ class ForgotPasswordController extends Controller
                     ]);
 
                 if ($superAdmin != "") {
-                    // todo SNS
-                    Mail::send('emails.forgot-password', ['token' => $token, 'name' => $superAdmin->first_name . ' ' . $superAdmin->last_name], function ($message) use ($request) {
+                    Mail::send('emails.management-system.forgot-password', ['token' => $token, 'name' => $superAdmin->first_name . ' ' . $superAdmin->last_name], function ($message) use ($request) {
                         $message->to($request->email);
                         $message->subject('Reset Password');
                     });
                 } else if ($eventVenueOwner != "") {
-                    // todo SNS
-                    Mail::send('emails.forgot-password', ['token' => $token, 'name' => $eventVenueOwner->first_name . ' ' . $eventVenueOwner->last_name], function ($message) use ($request) {
+                    Mail::send('emails.management-system.forgot-password', ['token' => $token, 'name' => $eventVenueOwner->first_name . ' ' . $eventVenueOwner->last_name], function ($message) use ($request) {
                         $message->to($request->email);
                         $message->subject('Reset Password');
                     });
@@ -195,7 +193,37 @@ class ForgotPasswordController extends Controller
         if (session('user_role') == "Guest") {
             return redirect('/');
         } else {
-            //
+            $data = request()->validate([
+                'email' => 'required|email'
+            ]);
+
+            // check if email exists, if exists, send a reset password email, else return an error message
+            $guest = DB::table('guests')
+                ->where('guests.email', $data['email'])
+                ->first();
+
+            if ($guest != "") {
+                $token = Str::random(64);
+
+                DB::table('password_resets')
+                    ->insert([
+                        'id' => Str::random(30),
+                        'email' => $data['email'],
+                        'token' => $token,
+                        'status' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+
+                Mail::send('emails.booking-system.forgot-password', ['token' => $token, 'name' => $guest->first_name . ' ' . $guest->last_name], function ($message) use ($request) {
+                    $message->to($request->email);
+                    $message->subject('Reset Password');
+                });
+
+                return back()->with('success', 'An email with a reset password link is sent to ' . $data['email'] . '.');
+            } else {
+                return back()->with('error', 'Failed to send reset password email! ' . $data['email'] . ' does not exist!');
+            }
         }
     }
 
@@ -205,7 +233,7 @@ class ForgotPasswordController extends Controller
         if (session('user_role') == "Guest") {
             return redirect('/');
         } else {
-            return view('auth.booking-system.reset-password');
+            return view('auth.booking-system.reset-password', ['token' => $token]);
         }
     }
 
@@ -215,7 +243,59 @@ class ForgotPasswordController extends Controller
         if (session('user_role') == "Guest") {
             return redirect('/');
         } else {
-            //
+            $data = request()->validate(
+                [
+                    'email' => 'required|email',
+                    'password' => 'required|min:8|confirmed',
+                    'password_confirmation' => 'required'
+                ],
+                [
+                    'password.required' => 'The new password field is required.',
+                    'password.confirmed' => 'The new password does not match.',
+                    'password_confirmation.required' => 'The confirm new password field is required.'
+                ]
+            );
+
+            $emailTokenStatus = DB::table('password_resets')
+                ->where('password_resets.email', $request->email)
+                ->where('password_resets.token', $request->token)
+                ->where('password_resets.status', 0)
+                ->first();
+
+            $validEmailToken = DB::table('password_resets')
+                ->where('password_resets.email', $request->email)
+                ->where('password_resets.token', $request->token)
+                ->where('password_resets.status', 1)
+                ->first();
+
+            if ($emailTokenStatus) {
+                return back()->withInput()->with('error', 'This reset password link has been used!');
+            } else if (!$validEmailToken) {
+                return back()->withInput()->with('error', 'Invalid email and token!');
+            } else {
+                $guest = DB::table('guests')
+                    ->where('guests.email', $data['email'])
+                    ->first();
+
+                if ($guest) {
+                    DB::table('guests')
+                        ->where('guests.email', $data['email'])
+                        ->update([
+                            'password' => Hash::make($data['password']),
+                            'updated_at' => now()
+                        ]);
+                }
+
+                DB::table('password_resets')
+                    ->where('password_resets.email', $data['email'])
+                    ->where('password_resets.token', $request->token)
+                    ->update([
+                        'status' => 0,
+                        'updated_at' => now()
+                    ]);
+
+                return redirect('/login')->with('success', 'Your password has been changed successfully, you may sign in with your new password!');
+            }
         }
     }
 }
