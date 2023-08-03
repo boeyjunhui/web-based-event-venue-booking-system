@@ -10,7 +10,32 @@
 
     {{-- tailwind css --}}
     @vite('resources/css/app.css')
+
+
 </head>
+
+@php
+    // echo 'test x ray start 1';
+    use Pkerrigan\Xray\Trace;
+use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
+Trace::getInstance()
+    ->setTraceHeader($_SERVER['HTTP_X_AMZN_TRACE_ID'] ?? null)
+    ->setName('app.example.com')
+    ->setUrl($_SERVER['REQUEST_URI'])
+    ->setMethod($_SERVER['REQUEST_METHOD'])
+    ->begin(); 
+
+sleep(1); // give x-ray something to actually measure
+
+Trace::getInstance()
+    ->end()
+    ->setResponseCode(http_response_code())
+    ->submit(new DaemonSegmentSubmitter());
+
+    // echo 'test x ray end 1';
+
+
+@endphp
 
 <style>
     input {

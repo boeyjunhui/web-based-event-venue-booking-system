@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,6 +17,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\EventVenueController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\SNSController;
 
 /*
 |--------------------------------------------------------------------------
@@ -193,3 +195,13 @@ Route::post('/place-booking', [BookingController::class, 'placeBooking']);
 Route::get('/bookings', [BookingController::class, 'viewAllBookings']);
 Route::get('/bookings/{booking}', [BookingController::class, 'viewBooking']);
 Route::patch('/cancel-booking/{booking}', [BookingController::class, 'cancelBooking']);
+//todo testing
+// Route::post('/execute-controller', 'SNSController@sendSMS')->name('execute-controller');
+
+
+// Route::post('/aaa', [SNSController::class, 'sendSMS']);
+
+Route::get('/sms', [SNSController::class, 'sendSMS']);
+
+// Route::post('/upload', 'UploadController@upload')->name('upload');
+Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
