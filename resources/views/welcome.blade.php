@@ -856,7 +856,7 @@
 </head>
 
 @php
-    echo 'test x ray start';
+    // echo 'test x ray start';
     use Pkerrigan\Xray\Trace;
 use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
 use Pkerrigan\Xray\SqlSegment;
