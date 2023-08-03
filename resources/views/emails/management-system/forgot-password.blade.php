@@ -12,8 +12,7 @@
     <section class="min-h-screen overflow-y-auto bg-gray-200">
         <div class="flex flex-col items-center justify-center px-8 py-8">
             <div class="grid justify-items-center mt-2 mb-6" style="text-align: center;">
-                {{-- todo --}}
-                <img src="{{ asset('/assets/urban-space-logo-white-bg.png') }}" class="rounded-lg" alt="" style="width: 325px; height: 61px;">
+                <img src="{{env('CLOUD_FRONT_URL')}}/assets/urban-space-logo-white-bg.png" class="rounded-lg" alt="" style="width: 325px; height: 61px;">
             </div>
 
             <div class="w-full bg-white rounded-2xl shadow-xl sm:max-w-md">

@@ -39,8 +39,7 @@
                                         {{-- todo --}}
                                         <img class="object-fill h-56 w-full rounded-t-xl" src="{{ asset('/uploads/event-venues/' . $eventVenueImage) }}" alt="">
                                     @else
-                                        {{-- todo --}}
-                                        <img class="object-fill h-56 w-full rounded-t-xl" src="{{ asset('/assets/image-placeholder.jpg') }}" alt="">
+                                        <img class="object-fill h-56 w-full rounded-t-xl" src="{{env('CLOUD_FRONT_URL')}}/assets/image-placeholder.jpg" alt="">
                                     @endif
                                 </div>
 

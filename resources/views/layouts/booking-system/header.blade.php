@@ -163,8 +163,7 @@
         <nav class="bg-brown-300 border-b border-gray-200 px-4 lg:px-6 py-2">
             <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                 <a href="/" class="flex items-center">
-                    {{-- todo --}}
-                    <img class="mr-3 h-6 sm:h-9" src="{{ asset('/assets/urban-space-logo-black.png') }}" alt="" style="width: 260px; height: 48px;">
+                    <img class="mr-3 h-6 sm:h-9" src="{{env('CLOUD_FRONT_URL')}}/assets/urban-space-logo-black.png" alt="" style="width: 260px; height: 48px;">
                 </a>
 
                 <div class="flex items-center lg:order-2">
@@ -175,8 +174,7 @@
                     @elseif (session('user_role') == "Guest")
                         {{-- profile dropdown --}}
                         <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar">
-                            {{-- todo --}}
-                            <img src="{{ asset('/assets/user.jpg') }}" alt="" class="h-10 w-10 bg-gray-200 border-2 border-brown-100 rounded-full">
+                            <img src="{{env('CLOUD_FRONT_URL')}}/assets/user.jpg" alt="" class="h-10 w-10 bg-gray-200 border-2 border-brown-100 rounded-full">
                         </button>
 
                         <div id="dropdownNavbar" class="hidden bg-white text-base z-10 list-none divide-y divide-gray-100 rounded shadow my-4 w-44">

@@ -155,46 +155,56 @@
             <div class="px-3 py-3 lg:px-5 lg:pl-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <button onclick="showHideSidebar()" data-drawer-target="sidebar" data-drawer-toggle="sidebar" aria-controls="sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-200">
+                        <button onclick="showHideSidebar()" data-drawer-target="sidebar" data-drawer-toggle="sidebar"
+                            aria-controls="sidebar" type="button"
+                            class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-200">
                             <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+                                <path
+                                    d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
+                                </path>
                             </svg>
                         </button>
-                        
+
                         <a href="/evbs/dashboard">
-                            {{-- todo --}}
-                            <img class="cursor-pointer" src="{{ asset('/assets/urban-space-logo-black.png') }}" alt="" style="width: 200px; height: 38px;">
+                            <img class="cursor-pointer"
+                                src="{{ env('CLOUD_FRONT_URL') }}/assets/urban-space-logo-black.jpg" alt=""
+                                style="width: 200px; height: 38px;">
                         </a>
                     </div>
 
                     @php
                         $authUserID = session('user')->id;
-
-                        if (session('user_role') == "Super Admin") {
+                        
+                        if (session('user_role') == 'Super Admin') {
                             $authUser = DB::table('super_admins')
                                 ->select('super_admins.first_name', 'super_admins.last_name')
                                 ->where('super_admins.id', $authUserID)
                                 ->first();
-                        } else if (session('user_role') == "Event Venue Owner") {
+                        } elseif (session('user_role') == 'Event Venue Owner') {
                             $authUser = DB::table('event_venue_owners')
                                 ->select('event_venue_owners.first_name', 'event_venue_owners.last_name')
                                 ->where('event_venue_owners.id', $authUserID)
                                 ->first();
                         }
                     @endphp
-                    
+
                     <div class="flex items-center">
-                        <a href="/evbs/profile" class="flex flex-row p-1.5 items-center rounded-lg hover:bg-gray-200 transition mr-4">
+                        <a href="/evbs/profile"
+                            class="flex flex-row p-1.5 items-center rounded-lg hover:bg-gray-200 transition mr-4">
                             <span class="flex flex-col">
-                                <span class="text-right font-semibold tracking-wide leading-none">{{ $authUser->first_name }} {{ $authUser->last_name }}</span>
-                                <span class="text-right text-gray-500 text-xs leading-none mt-1">{{ session('user_role') }}</span>
+                                <span
+                                    class="text-right font-semibold tracking-wide leading-none">{{ $authUser->first_name }}
+                                    {{ $authUser->last_name }}</span>
+                                <span
+                                    class="text-right text-gray-500 text-xs leading-none mt-1">{{ session('user_role') }}</span>
                             </span>
                         </a>
 
                         <form action="/evbs/logout" method="GET">
                             @csrf
 
-                            <a href="/evbs/logout" class="p-2.5 rounded-lg hover:bg-red-100 transition" id="sign-out-confirmation">
+                            <a href="/evbs/logout" class="p-2.5 rounded-lg hover:bg-red-100 transition"
+                                id="sign-out-confirmation">
                                 <span class="text-xl text-red-500"><i class="bx bx-log-out"></i></span>
                             </a>
                         </form>
@@ -203,7 +213,9 @@
             </div>
         </nav> {{-- end header --}}
 
-        <aside id="sidebar" class="fixed w-64 h-screen bg-white border pt-16 transition lg:translate-x-0 md:translate-x-0 sm:-translate-x-full translate-x-0 lg:block md:hidden sm:hidden hidden"> {{-- sidebar --}}
+        <aside id="sidebar"
+            class="fixed w-64 h-screen bg-white border pt-16 transition lg:translate-x-0 md:translate-x-0 sm:-translate-x-full translate-x-0 lg:block md:hidden sm:hidden hidden">
+            {{-- sidebar --}}
             <div class="h-full px-3 pt-5 pb-4 overflow-y-auto bg-white">
                 <ul class="font-medium">
                     <li class="px-3">
@@ -213,8 +225,10 @@
                     </li>
 
                     <li>
-                        <a href="/evbs/dashboard" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-chart"></i></span>
+                        <a href="/evbs/dashboard"
+                            class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                    class="bx bx-chart"></i></span>
                             <span class="text-sm font-medium ml-3">Dashboard</span>
                         </a>
                     </li>
@@ -228,15 +242,19 @@
                     </li>
 
                     <li>
-                        <a href="/evbs/bookings/guest-bookings" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-notepad"></i></span>
+                        <a href="/evbs/bookings/guest-bookings"
+                            class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                    class="bx bx-notepad"></i></span>
                             <span class="text-sm font-medium ml-3">Guest Booking</span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="/evbs/bookings/venue-blockings" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-calendar-x"></i></span>
+                        <a href="/evbs/bookings/venue-blockings"
+                            class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                    class="bx bx-calendar-x"></i></span>
                             <span class="text-sm font-medium ml-3">Venue Blocking</span>
                         </a>
                     </li>
@@ -249,23 +267,27 @@
                         </div>
                     </li>
 
-                    @if (session('user_role') == "Super Admin")
+                    @if (session('user_role') == 'Super Admin')
                         <li>
-                            <a href="/evbs/event-types" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-list-ul"></i></span>
+                            <a href="/evbs/event-types"
+                                class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                        class="bx bx-list-ul"></i></span>
                                 <span class="text-sm font-medium ml-3">Event Type</span>
                             </a>
                         </li>
                     @endif
-                    
+
                     <li>
-                        <a href="/evbs/event-venues" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-building-house"></i></span>
+                        <a href="/evbs/event-venues"
+                            class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                            <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                    class="bx bx-building-house"></i></span>
                             <span class="text-sm font-medium ml-3">Event Venue</span>
                         </a>
                     </li>
 
-                    @if (session('user_role') == "Super Admin")
+                    @if (session('user_role') == 'Super Admin')
                         <div class="mt-5"></div>
 
                         <li class="px-3">
@@ -275,25 +297,31 @@
                         </li>
 
                         <li>
-                            <a href="/evbs/super-admins" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-user"></i></span>
+                            <a href="/evbs/super-admins"
+                                class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                        class="bx bx-user"></i></span>
                                 <span class="text-sm font-medium ml-3">Super Admin</span>
                             </a>
                         </li>
 
                         <li>
-                            <a href="/evbs/event-venue-owners" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-user"></i></span>
+                            <a href="/evbs/event-venue-owners"
+                                class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                        class="bx bx-user"></i></span>
                                 <span class="text-sm font-medium ml-3">Event Venue Owner</span>
                             </a>
                         </li>
 
                         <li>
-                            <a href="/evbs/guests" class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
-                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i class="bx bx-user"></i></span>
+                            <a href="/evbs/guests"
+                                class="flex items-center p-2 rounded-lg text-gray-700 hover:bg-teal-100 transition">
+                                <span class="inline-flex items-center justify-center w-6 h-6 text-lg text-gray-700"><i
+                                        class="bx bx-user"></i></span>
                                 <span class="text-sm font-medium ml-3">Guest</span>
                             </a>
-                        </li>                        
+                        </li>
                     @endif
                 </ul>
             </div>

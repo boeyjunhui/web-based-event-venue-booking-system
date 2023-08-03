@@ -248,8 +248,7 @@
 
                     @php $eventVenueImageNo++; @endphp
                 @else
-                {{-- todo --}}
-                    <img class="w-full border rounded-xl cursor-pointer" src="{{ asset('/assets/image-placeholder.jpg') }}" alt="" style="height: 200px;">
+                    <img class="w-full border rounded-xl cursor-pointer" src="{{env('CLOUD_FRONT_URL')}}/assets/image-placeholder.jpg" alt="" style="height: 200px;">
                 @endif
             @endforeach
         </div>

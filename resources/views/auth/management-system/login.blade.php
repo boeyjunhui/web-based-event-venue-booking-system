@@ -63,8 +63,7 @@ Trace::getInstance()
             @endif
 
             <span class="flex items-center mt-24 mb-6">
-                {{-- todo --}}
-                <img src="{{ asset('/assets/urban-space-logo-black.png') }}" alt="" style="width: 380px; height: 75px;">
+            <img src="{{env('CLOUD_FRONT_URL')}}/assets/urban-space-logo-black.png" alt=""style="width: 380px; height: 75px;">
             </span>
             
             <div class="w-full bg-white rounded-lg sm:max-w-md">
