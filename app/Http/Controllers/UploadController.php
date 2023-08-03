@@ -19,8 +19,8 @@ class UploadController extends Controller
 
         // Xray::addSegment('MyCustomLogic');
         Trace::getInstance()
-        ->getCurrentSegment()
-        ->addSubsegment((new RemoteSegment())->setName('S3imageload')->begin());
+            ->getCurrentSegment()
+            ->addSubsegment((new RemoteSegment())->setName('S3imageload')->begin());
         $request->validate([
             'file' => 'required|mimes:jpeg,png,pdf|max:2048', // Adjust the allowed file types and size as needed
         ]);
@@ -32,6 +32,8 @@ class UploadController extends Controller
             // Get the path of the uploaded file
             $sourceFilePath = $file->getRealPath();
 
+            // Get the content type (MIME type) of the uploaded file
+            $contentType = $file->getClientMimeType();
 
             // Create S3 client
             $s3 = \App::make('aws')->createClient('s3');
@@ -41,6 +43,8 @@ class UploadController extends Controller
                     'Bucket' => env('AWS_BUCKET'),
                     'Key' => $fileName,
                     'SourceFile' => $sourceFilePath,
+                    'ACL' => 'public-read',
+                    'ContentType' => $contentType,
                 ]);
             } catch (\Aws\S3\Exception\S3Exception $e) {
                 // Catch any S3 exceptions and return an error message
@@ -52,13 +56,13 @@ class UploadController extends Controller
 
             //   Xray::endSegment('MyCustomLogic');
             Trace::getInstance()
-            ->getCurrentSegment()
-            ->end();
-        
-        Trace::getInstance()
-            ->end()
-            ->setResponseCode(http_response_code())
-            ->submit(new DaemonSegmentSubmitter());
+                ->getCurrentSegment()
+                ->end();
+
+            Trace::getInstance()
+                ->end()
+                ->setResponseCode(http_response_code())
+                ->submit(new DaemonSegmentSubmitter());
             return redirect()->back()->with('success', 'File uploaded successfully. File path: ' . $url);
         }
 

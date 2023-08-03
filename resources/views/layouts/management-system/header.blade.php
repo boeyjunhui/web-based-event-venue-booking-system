@@ -167,7 +167,7 @@
 
                         <a href="/evbs/dashboard">
                             <img class="cursor-pointer"
-                                src="{{ env('CLOUD_FRONT_URL') }}/assets/urban-space-logo-black.jpg" alt=""
+                                src="{{ env('CLOUD_FRONT_URL') }}/assets/urban-space-logo-black.png" alt=""
                                 style="width: 200px; height: 38px;">
                         </a>
                     </div>

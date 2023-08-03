@@ -201,12 +201,10 @@
             @foreach ($eventVenueImages as $eventVenueImage)
                 @if ($eventVenueImage != "")
                     <div class="group relative">
-                        {{-- todo --}}
-                        <img class="w-full border rounded-xl cursor-pointer" src="{{ asset('/uploads/event-venues/' . $eventVenueImage) }}" alt="" style="height: 200px;">
+                        <img class="w-full border rounded-xl cursor-pointer" src="{{ env('CLOUD_FRONT_URL') .'/uploads/event-venues/' .$eventVenueImage }}" alt="" style="height: 200px;">
 
                         <div class="absolute top-0 left-0 w-full h-0 flex flex-col justify-center items-center rounded-xl backdrop-blur-sm bg-black/70 opacity-0 group-hover:h-full group-hover:opacity-100 duration-500">
                             <div class="grid grid-cols-2 gap-4">
-                                {{-- todo --}}
                                 <a href="{{ asset('/uploads/event-venues/' . $eventVenueImage) }}" class="p-2 w-20 items-left text-center text-sm text-white rounded-lg bg-teal-500 hover:bg-teal-700 transition" target="_blank">View</a>
 
                                 <form action="/evbs/event-venues/{{ $eventVenue->id }}/delete-single-event-venue-image" method="POST">

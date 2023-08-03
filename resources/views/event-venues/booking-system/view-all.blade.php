@@ -36,8 +36,7 @@
 
                                 <div class="relative pb- overflow-hidden">
                                     @if ($eventVenueImage != "")
-                                        {{-- todo --}}
-                                        <img class="object-fill h-56 w-full rounded-t-xl" src="{{ asset('/uploads/event-venues/' . $eventVenueImage) }}" alt="">
+                                        <img class="object-fill h-56 w-full rounded-t-xl" src="{{ env('CLOUD_FRONT_URL') .'/uploads/event-venues/' .$eventVenueImage }}" alt="">
                                     @else
                                         <img class="object-fill h-56 w-full rounded-t-xl" src="{{env('CLOUD_FRONT_URL')}}/assets/image-placeholder.jpg" alt="">
                                     @endif

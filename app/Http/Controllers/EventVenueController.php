@@ -93,8 +93,26 @@ class EventVenueController extends Controller
                 foreach ($request->eventVenueImages as $image) {
                     $randomString = Str::random(30);
                     $eventVenueImagesFilename = $randomString . '.' . $image->getClientOriginalExtension();
-                    // todo
-                    $image->move(public_path('/uploads/event-venues'), $eventVenueImagesFilename);
+                    // Get the path of the uploaded file
+                    $sourceFilePath = $image->getRealPath();
+
+                    // Get the content type (MIME type) of the uploaded file
+                    $contentType = $image->getClientMimeType();
+
+                    // Create S3 client
+                    $s3 = \App::make('aws')->createClient('s3');
+                    try {
+                        $result = $s3->putObject([
+                            'Bucket' => env('AWS_BUCKET'),
+                            'Key' => 'uploads/event-venues/' . $eventVenueImagesFilename,
+                            'SourceFile' => $sourceFilePath,
+                            'ACL' => 'public-read',
+                            'ContentType' => $contentType,
+                        ]);
+                    } catch (\Aws\S3\Exception\S3Exception $e) {
+                        // Catch any S3 exceptions and return an error message
+                        print($e->getMessage());
+                    }
                     $combinedEventVenueImages[] = $eventVenueImagesFilename;
                 }
 
@@ -309,8 +327,31 @@ class EventVenueController extends Controller
                 foreach ($request->eventVenueImages as $image) {
                     $randomString = Str::random(30);
                     $eventVenueImagesFilename = $randomString . '.' . $image->getClientOriginalExtension();
-                    // todo
-                    $image->move(public_path('/uploads/event-venues'), $eventVenueImagesFilename);
+                    // Get the path of the uploaded file
+                    $sourceFilePath = $image->getRealPath();
+
+                    // Get the content type (MIME type) of the uploaded file
+                    $contentType = $image->getClientMimeType();
+
+                    // Create S3 client
+                    $s3 = \App::make('aws')->createClient('s3');
+                    try {
+                        $result = $s3->putObject([
+                            'Bucket' => env('AWS_BUCKET'),
+                            'Key' => 'uploads/event-venues/' . $eventVenueImagesFilename,
+                            'SourceFile' => $sourceFilePath,
+                            'ACL' => 'public-read',
+                            'ContentType' => $contentType,
+                        ]);
+                    } catch (\Aws\S3\Exception\S3Exception $e) {
+                        // Catch any S3 exceptions and return an error message
+                        print($e->getMessage());
+                    }
+
+
+
+
+                    //$image->move(public_path('/uploads/event-venues'), $eventVenueImagesFilename);
                     $combinedEventVenueImages[] = $eventVenueImagesFilename;
                 }
 
@@ -434,10 +475,17 @@ class EventVenueController extends Controller
             $eventVenueID = $request->segment(3);
 
             $singleEventVenueImage = $request->singleEventVenueImage;
-            // todo
-            $eventVenueImagesPath = public_path('/uploads/event-venues/' . $singleEventVenueImage);
-            File::delete($eventVenueImagesPath);
-
+            // Create S3 client
+            $s3 = \App::make('aws')->createClient('s3');
+            try {
+                $result = $s3->deleteObject([
+                    'Bucket' => env('AWS_BUCKET'),
+                    'Key' => 'uploads/event-venues/' . $singleEventVenueImage,
+                ]);
+            } catch (\Aws\S3\Exception\S3Exception $e) {
+                // Catch any S3 exceptions and return an error message
+                print($e->getMessage());
+            }
             $existingEventVenueImages = [];
             $existingEventVenueImages = explode(',', $request->eventVenueImages);
 
@@ -475,9 +523,16 @@ class EventVenueController extends Controller
             $allEventVenueImages = explode(',', $request->allEventVenueImages);
 
             for ($i = 0; $i < count($allEventVenueImages); $i++) {
-                // todo
-                $eventVenueImagesPath = public_path('/uploads/event-venues/' . $allEventVenueImages[$i]);
-                File::delete($eventVenueImagesPath);
+                $s3 = \App::make('aws')->createClient('s3');
+                try {
+                    $result = $s3->deleteObject([
+                        'Bucket' => env('AWS_BUCKET'),
+                        'Key' => 'uploads/event-venues/' . $allEventVenueImages[$i],
+                    ]);
+                } catch (\Aws\S3\Exception\S3Exception $e) {
+                    // Catch any S3 exceptions and return an error message
+                    print($e->getMessage());
+                }
             }
 
             DB::table('event_venues')
@@ -504,9 +559,16 @@ class EventVenueController extends Controller
             $eventVenueImages = explode(',', $request->eventVenueImages);
 
             for ($i = 0; $i < count($eventVenueImages); $i++) {
-                // todo
-                $eventVenueImagesPath = public_path('/uploads/event-venues/' . $eventVenueImages[$i]);
-                File::delete($eventVenueImagesPath);
+                $s3 = \App::make('aws')->createClient('s3');
+                try {
+                    $result = $s3->deleteObject([
+                        'Bucket' => env('AWS_BUCKET'),
+                        'Key' => 'uploads/event-venues/' . $eventVenueImages[$i],
+                    ]);
+                } catch (\Aws\S3\Exception\S3Exception $e) {
+                    // Catch any S3 exceptions and return an error message
+                    print($e->getMessage());
+                }
             }
 
             DB::table('event_venues')

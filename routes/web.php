@@ -30,7 +30,7 @@ use App\Http\Controllers\SNSController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/la', function () {
     return view('welcome');
 });
 
@@ -195,13 +195,7 @@ Route::post('/place-booking', [BookingController::class, 'placeBooking']);
 Route::get('/bookings', [BookingController::class, 'viewAllBookings']);
 Route::get('/bookings/{booking}', [BookingController::class, 'viewBooking']);
 Route::patch('/cancel-booking/{booking}', [BookingController::class, 'cancelBooking']);
-//todo testing
-// Route::post('/execute-controller', 'SNSController@sendSMS')->name('execute-controller');
-
-
-// Route::post('/aaa', [SNSController::class, 'sendSMS']);
 
 Route::get('/sms', [SNSController::class, 'sendSMS']);
 
-// Route::post('/upload', 'UploadController@upload')->name('upload');
 Route::post('/upload', [UploadController::class, 'upload'])->name('upload');

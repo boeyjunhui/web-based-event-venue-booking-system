@@ -264,10 +264,8 @@
                     <div class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4">
                         @foreach ($eventVenueImages as $eventVenueImage)
                             @if ($eventVenueImages != "")
-                                {{-- todo --}}
-                                <a href="{{ asset('/uploads/event-venues/' . $eventVenueImage) }}" target="_blank">
-                                    {{-- todo --}}
-                                    <img class="w-full border rounded-xl cursor-pointer" src="{{ asset('/uploads/event-venues/' . $eventVenueImage) }}" alt="" style="height: 200px;">
+                                <a href="{{ env('CLOUD_FRONT_URL') .'/uploads/event-venues/' .$eventVenueImage }}" target="_blank">
+                                    <img class="w-full border rounded-xl cursor-pointer" src="{{ env('CLOUD_FRONT_URL') .'/uploads/event-venues/' .$eventVenueImage }}" alt="" style="height: 200px;">
                                 </a>
                             @endif
                         @endforeach

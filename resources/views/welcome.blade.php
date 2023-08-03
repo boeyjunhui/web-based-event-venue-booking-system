@@ -898,7 +898,7 @@ Trace::getInstance()
         class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
         <div class="  bg-red-50">
             {{-- todo this is image file from s3 --}}
-            <img src="https://ddac-assignment-1.s3.amazonaws.com/urban-space-logo-white.png" alt="log">
+            <img src="https://ddac-assignment-1.s3.amazonaws.com/test-img+1.png" alt="log">
 
             {{-- todo form that upload file to s3 --}}
             <form action="{{ route('upload') }}" method="post" enctype="multipart/form-data">
