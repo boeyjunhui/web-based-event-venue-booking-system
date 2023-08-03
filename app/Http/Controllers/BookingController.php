@@ -123,6 +123,30 @@ class BookingController extends Controller
                     'updated_at' => now()
                 ]);
 
+            // booking confirmation email
+            $guest = DB::table('guests')
+                ->select('guests.first_name', 'guests.last_name', 'guests.email', 'guests.phone_number')
+                ->where('guests.id', $request->guest)
+                ->first();
+
+            $eventVenue = DB::table('event_venues')
+                ->select('event_venues.event_venue_name', 'event_venues.address', 'event_venues.postal_code', 'event_venues.city', 'event_venues.state', 'event_venues.country')
+                ->where('event_venues.id', $request->eventVenue)
+                ->first();
+
+            Mail::send('emails.booking-system.quotation-request', ['name' => $guest->first_name . ' ' . $guest->last_name, 'eventVenueName' => $eventVenue->event_venue_name, 'address' => $eventVenue->address . ', ' . $eventVenue->postal_code . ', ' . $eventVenue->city . ', ' . $eventVenue->state . ', ' . $eventVenue->country . '.', 'startDate' => $request->startDate, 'endDate' => $request->endDate, 'startTime' => $request->startTime, 'endTime' => $request->endTime, 'numberOfGuests' => $request->numberOfGuests, 'remarks' => $request->remarks], function ($message) use ($guest) {
+                $message->to($guest->email);
+                $message->subject('Quotation Request');
+            });
+
+            // booking sms
+            $params = [
+                'Message' => 'We\'ve received your quotation request for ' . $eventVenue->event_venue_name . '. Please refer to your email for official quotation.',
+                'PhoneNumber' => '+60132911366',
+            ];
+            $sns = \Illuminate\Support\Facades\App::make('aws')->createClient('sns');
+            $result = $sns->publish($params);
+
             return redirect('/evbs/bookings/guest-bookings')->with('success', 'Guest booking created successfully!');
         }
     }
@@ -584,7 +608,7 @@ class BookingController extends Controller
 
             // booking confirmation email
             $guest = DB::table('guests')
-                ->select('guests.first_name', 'guests.last_name', 'guests.email')
+                ->select('guests.first_name', 'guests.last_name', 'guests.email', 'guests.phone_number')
                 ->where('guests.id', $guestID)
                 ->first();
 
@@ -597,6 +621,14 @@ class BookingController extends Controller
                 $message->to($guest->email);
                 $message->subject('Quotation Request');
             });
+
+            // booking sms
+            $params = [
+                'Message' => 'We\'ve received your quotation request for ' . $eventVenue->event_venue_name . '. Please refer to your email for official quotation.',
+                'PhoneNumber' => '+60132911366',
+            ];
+            $sns = \Illuminate\Support\Facades\App::make('aws')->createClient('sns');
+            $result = $sns->publish($params);
 
             return redirect('/bookings')->with('success', 'Quotation requested successfully!');
         }
