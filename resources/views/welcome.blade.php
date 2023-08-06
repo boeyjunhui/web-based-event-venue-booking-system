@@ -1,6 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
+{{-- @php
+    // echo 'test x ray start';
+    use Pkerrigan\Xray\Trace;
+    use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
+    use Pkerrigan\Xray\SqlSegment;
+    Trace::getInstance()
+        ->setTraceHeader($_SERVER['HTTP_X_AMZN_TRACE_ID'] ?? null)
+        ->setName('app.example.com')
+        ->setUrl($_SERVER['REQUEST_URI'])
+        ->setMethod($_SERVER['REQUEST_METHOD'])
+        ->begin(100);
+    
+    sleep(1); // give x-ray something to actually measure
+    
+    Trace::getInstance()
+        ->getCurrentSegment()
+        ->addSubsegment(
+            (new SqlSegment())
+                ->setName('db.example.com')
+                ->setDatabaseType('PostgreSQL')
+                ->setQuery('ewqqwqwweww') // Make sure to remove sensitive data before passing in a query
+                ->begin(),
+        );
+    // Run your query here
+    Trace::getInstance()
+        ->getCurrentSegment()
+        ->end();
+    
+    Trace::getInstance()
+        ->end()
+        ->setResponseCode(http_response_code())
+        ->submit(new DaemonSegmentSubmitter());
+    
+    //echo 'test x ray end';
+@endphp --}}
+
+
+
+
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -855,42 +895,6 @@
     </style>
 </head>
 
-@php
-    // echo 'test x ray start';
-    use Pkerrigan\Xray\Trace;
-use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
-use Pkerrigan\Xray\SqlSegment;
-Trace::getInstance()
-    ->setTraceHeader($_SERVER['HTTP_X_AMZN_TRACE_ID'] ?? null)
-    ->setName('app.example.com')
-    ->setUrl($_SERVER['REQUEST_URI'])
-    ->setMethod($_SERVER['REQUEST_METHOD'])
-    ->begin(); 
-
-sleep(1); // give x-ray something to actually measure
-
-Trace::getInstance()
-    ->getCurrentSegment()
-    ->addSubsegment(
-        (new SqlSegment())
-        ->setName('db.example.com')
-        ->setDatabaseType('PostgreSQL')
-        ->setQuery('ssssss') // Make sure to remove sensitive data before passing in a query
-        ->begin()
-    );
-// Run your query here
-Trace::getInstance()
-    ->getCurrentSegment()
-    ->end();
-
-Trace::getInstance()
-    ->end()
-    ->setResponseCode(http_response_code())
-    ->submit(new DaemonSegmentSubmitter());
-
-    echo 'test x ray end';
-
-@endphp
 
 <body class="antialiased">
 
