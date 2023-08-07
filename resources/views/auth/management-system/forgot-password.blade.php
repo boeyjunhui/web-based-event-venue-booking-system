@@ -1,3 +1,5 @@
+@include('layouts.xray.start-xray', ['name' => 'urban-space-test.us-east-1.elasticbeanstalk.com/evbs'])
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,3 +63,4 @@
     </section>
 </body>
 </html>
+@include('layouts.xray.end-xray')

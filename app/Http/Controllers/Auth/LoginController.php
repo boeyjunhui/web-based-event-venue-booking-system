@@ -8,9 +8,23 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\XRayController;
+
+
+use Pkerrigan\Xray\Trace;
+use Pkerrigan\Xray\SqlSegment;
+use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
+use Pkerrigan\Xray\RemoteSegment;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
+    protected $xRayController;
+
+    // public function __construct(ControllerA $controllerA)
+    // {
+    //     $this->controllerA = $controllerA;
+    // }
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -36,9 +50,10 @@ class LoginController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(XRayController $xRayController)
     {
         $this->middleware('guest')->except('logout');
+        $this->xRayController = $xRayController;
     }
 
     /* ========================================
@@ -133,12 +148,24 @@ class LoginController extends Controller
                 'email' => 'required|email',
                 'password' => 'required|min:8'
             ]);
-
-            $guest = DB::table("guests")
+            //todo x ray
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table("guests")
                 ->select('guests.*')
                 ->where('guests.email', $request->email)
-                ->where('guests.status', 1)
-                ->first();
+                ->where('guests.status', 1);
+
+            $guest = $query->first();
+
+            $this->xRayController->addRdsQuery($query->toSql());
+            // $this->xRayController->end();
+            // $this->xRayController->startS3();
+            // sleep(1.2);
+
+             $this->xRayController->end();
+
+             $this->xRayController->submit();
 
             if ($guest) {
                 if (Auth::guard('guest')->attempt($request->only(['email', 'password']), $request->get('remember'))) {
@@ -152,6 +179,13 @@ class LoginController extends Controller
             } else {
                 return back()->withInput($request->only('email', 'remember'))->withErrors(['email' => ['This email does not exist.']]);
             }
+
+
+
+
+
+
+
         }
     }
 }
