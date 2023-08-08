@@ -6,9 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\XRayController;
 
 class EventVenueOwnerController extends Controller
 {
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
+
     /* ========================================
     Super Admin
     ======================================== */
@@ -48,7 +54,8 @@ class EventVenueOwnerController extends Controller
                 'password_confirmation.required' => 'The confirm password field is required.'
             ]
         );
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_venue_owners')
             ->insert([
                 'id' => Str::random(30),
@@ -66,7 +73,10 @@ class EventVenueOwnerController extends Controller
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('insert into event_venue_owners');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/event-venue-owners')->with('success', 'Event venue owner created successfully!');
     }
 
@@ -76,12 +86,17 @@ class EventVenueOwnerController extends Controller
         if (session('user_role') != "Super Admin") {
             return redirect('/evbs/login');
         }
-
-        $eventVenueOwners = DB::table('event_venue_owners')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $eventVenueOwnersQuery = DB::table('event_venue_owners')
             ->select('event_venue_owners.*')
-            ->orderBy('event_venue_owners.created_at', 'desc')
-            ->get();
+            ->orderBy('event_venue_owners.created_at', 'desc');
+        $eventVenueOwners = $eventVenueOwnersQuery->get();
 
+        $this->xRayController->addRdsQuery($eventVenueOwnersQuery->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('event-venue-owners.view-all', compact('eventVenueOwners'));
     }
 
@@ -93,12 +108,17 @@ class EventVenueOwnerController extends Controller
         }
 
         $eventVenueOwnerID = $request->segment(3);
-
-        $eventVenueOwner = DB::table('event_venue_owners')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $eventVenueOwnerQuery = DB::table('event_venue_owners')
             ->select('event_venue_owners.*')
-            ->where('event_venue_owners.id', $eventVenueOwnerID)
-            ->first();
+            ->where('event_venue_owners.id', $eventVenueOwnerID);
+        $eventVenueOwner = $eventVenueOwnerQuery->first();
 
+        $this->xRayController->addRdsQuery($eventVenueOwnerQuery->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('event-venue-owners.view', compact('eventVenueOwner'));
     }
 
@@ -110,12 +130,17 @@ class EventVenueOwnerController extends Controller
         }
 
         $eventVenueOwnerID = $request->segment(3);
-
-        $eventVenueOwner = DB::table('event_venue_owners')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $eventVenueOwnerQuery = DB::table('event_venue_owners')
             ->select('event_venue_owners.*')
-            ->where('event_venue_owners.id', $eventVenueOwnerID)
-            ->first();
+            ->where('event_venue_owners.id', $eventVenueOwnerID);
+        $eventVenueOwner = $eventVenueOwnerQuery->first();
 
+        $this->xRayController->addRdsQuery($eventVenueOwnerQuery->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('event-venue-owners.edit', compact('eventVenueOwner'));
     }
 
@@ -139,8 +164,9 @@ class EventVenueOwnerController extends Controller
         ]);
 
         $eventVenueOwnerID = $request->segment(3);
-
-        DB::table('event_venue_owners')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $query = DB::table('event_venue_owners')
             ->where('event_venue_owners.id', $eventVenueOwnerID)
             ->update([
                 'first_name' => $request->firstName,
@@ -154,7 +180,10 @@ class EventVenueOwnerController extends Controller
                 'country' => $request->country,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('update event_venue_owners where');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/event-venue-owners')->with('success', 'Event venue owner updated successfully!');
     }
 
@@ -166,12 +195,18 @@ class EventVenueOwnerController extends Controller
         }
 
         $eventVenueOwnerID = $request->segment(3);
-
-        $eventVenueOwner = DB::table('event_venue_owners')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $query = DB::table('event_venue_owners')
             ->select('event_venue_owners.*')
             ->where('event_venue_owners.id', $eventVenueOwnerID)
             ->first();
+        $eventVenueOwner = $query->first();
 
+        $this->xRayController->addRdsQuery($query->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('event-venue-owners.edit-password', compact('eventVenueOwner'));
     }
 
@@ -196,14 +231,18 @@ class EventVenueOwnerController extends Controller
         );
 
         $eventVenueOwnerID = $request->segment(3);
-
-        DB::table('event_venue_owners')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $query = DB::table('event_venue_owners')
             ->where('event_venue_owners.id', $eventVenueOwnerID)
             ->update([
                 'password' => Hash::make($request->password),
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('update event_venue_owners password');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/event-venue-owners/' . $eventVenueOwnerID)->with('success', 'Password changed successfully!');
     }
 
@@ -215,14 +254,18 @@ class EventVenueOwnerController extends Controller
         }
 
         $eventVenueOwnerID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_venue_owners')
             ->where('event_venue_owners.id', $eventVenueOwnerID)
             ->update([
                 'status' => 1,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('event_venue_owners status = 1');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/event-venue-owners')->with('success', 'Event venue owner activated successfully!');
     }
 
@@ -234,14 +277,18 @@ class EventVenueOwnerController extends Controller
         }
 
         $eventVenueOwnerID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_venue_owners')
             ->where('event_venue_owners.id', $eventVenueOwnerID)
             ->update([
                 'status' => 0,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('event_venue_owners status = 0');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/event-venue-owners')->with('success', 'Event venue owner deactivated successfully!');
     }
 
@@ -253,11 +300,15 @@ class EventVenueOwnerController extends Controller
         }
 
         $eventVenueOwnerID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_venue_owners')
             ->where('event_venue_owners.id', $eventVenueOwnerID)
             ->delete();
+        $this->xRayController->addRdsQuery('delete from event_venue_owners');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/event-venue-owners')->with('success', 'Event venue owner deleted successfully!');
     }
 }

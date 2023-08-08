@@ -10,13 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\XRayController;
 
-
-use Pkerrigan\Xray\Trace;
-use Pkerrigan\Xray\SqlSegment;
-use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
-use Pkerrigan\Xray\RemoteSegment;
-use Illuminate\Support\Facades\Session;
-
 class LoginController extends Controller
 {
     protected $xRayController;
@@ -82,11 +75,16 @@ class LoginController extends Controller
             ]);
 
             if ($request->userRole == "1") {
-                $superAdmin = DB::table("super_admins")
+                $this->xRayController->begin();
+                $this->xRayController->startRds();
+                $query = DB::table("super_admins")
                     ->select('super_admins.*')
                     ->where('super_admins.email', $request->email)
-                    ->where('super_admins.status', 1)
-                    ->first();
+                    ->where('super_admins.status', 1);
+                $superAdmin = $query->first();
+                $this->xRayController->addRdsQuery($query->toSql());
+                $this->xRayController->end();
+                $this->xRayController->submit();
 
                 if ($superAdmin) {
                     if (Auth::guard('super_admin')->attempt($request->only(['email', 'password']), $request->get('remember'))) {
@@ -101,11 +99,16 @@ class LoginController extends Controller
                     return back()->withInput($request->only('email', 'remember'))->withErrors(['email' => ['This email does not exist.']]);
                 }
             } else if ($request->userRole == "2") {
-                $eventVenueOwner = DB::table("event_venue_owners")
+                $this->xRayController->begin();
+                $this->xRayController->startRds();
+                $query = DB::table("event_venue_owners")
                     ->select('event_venue_owners.*')
                     ->where('event_venue_owners.email', $request->email)
-                    ->where('event_venue_owners.status', 1)
-                    ->first();
+                    ->where('event_venue_owners.status', 1);
+                $eventVenueOwner = $query->first();
+                $this->xRayController->addRdsQuery($query->toSql());
+                $this->xRayController->end();
+                $this->xRayController->submit();
 
                 if ($eventVenueOwner) {
                     if (Auth::guard('event_venue_owner')->attempt($request->only(['email', 'password']), $request->get('remember'))) {
@@ -148,7 +151,6 @@ class LoginController extends Controller
                 'email' => 'required|email',
                 'password' => 'required|min:8'
             ]);
-            //todo x ray
             $this->xRayController->begin();
             $this->xRayController->startRds();
             $query = DB::table("guests")
@@ -159,13 +161,10 @@ class LoginController extends Controller
             $guest = $query->first();
 
             $this->xRayController->addRdsQuery($query->toSql());
-            // $this->xRayController->end();
-            // $this->xRayController->startS3();
-            // sleep(1.2);
 
-             $this->xRayController->end();
+            $this->xRayController->end();
 
-             $this->xRayController->submit();
+            $this->xRayController->submit();
 
             if ($guest) {
                 if (Auth::guard('guest')->attempt($request->only(['email', 'password']), $request->get('remember'))) {

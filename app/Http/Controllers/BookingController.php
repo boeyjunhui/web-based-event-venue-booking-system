@@ -6,9 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\XRayController;
 
 class BookingController extends Controller
 {
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
+
     // check event venue availability
     public function checkEventVenueAvailability(Request $request)
     {

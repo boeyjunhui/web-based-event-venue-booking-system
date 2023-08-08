@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 
 use Pkerrigan\Xray\Trace;
 use Pkerrigan\Xray\SqlSegment;
-use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
 use Pkerrigan\Xray\RemoteSegment;
+use Pkerrigan\Xray\Submission\DaemonSegmentSubmitter;
 use Illuminate\Support\Facades\Session;
 
 
@@ -28,15 +28,23 @@ class XRayController extends Controller
     }
     public function startS3()
     {
+        
         Trace::getInstance()
             ->getCurrentSegment()
             ->addSubsegment(
                 (new RemoteSegment())
-                    ->setName('s3://cleanconnect-image/images/')
+                    ->setName('s3:uplods/event-venues')
                     ->begin(100)
             );
 
 
+    }
+    public function errorS3($e) {
+        Trace::getInstance()
+        ->getCurrentSegment()
+        ->setError(true)
+        ->addAnnotation('error', 'Error uploading image: ' . $e->getMessage())
+        ->end();
     }
     public function startRds()
     {
@@ -54,12 +62,17 @@ class XRayController extends Controller
     }
     public function addRdsQuery($query)
     {
-        echo 'start collection';
+      //  echo 'start collection';
 
         Trace::getInstance()
             ->getCurrentSegment()
             ->setQuery($query)
             ->end();
+
+            // Trace::getInstance()
+            // ->end()
+            // ->setResponseCode(http_response_code())
+            // ->submit(new DaemonSegmentSubmitter());
     }
 
     public function end()

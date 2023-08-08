@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\XRayController;
 
 class ProfileController extends Controller
 {
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
+
     /* ========================================
     Super Admin & Event Venue Owner
     ======================================== */
@@ -21,18 +27,30 @@ class ProfileController extends Controller
         $userID = session('user')->id;
 
         if (session('user_role') == "Super Admin") {
-            $user = DB::table('super_admins')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('super_admins')
                 ->select('super_admins.*')
-                ->where('super_admins.id', $userID)
-                ->first();
+                ->where('super_admins.id', $userID);
+            $user = $query->first();
+            $this->xRayController->addRdsQuery($query->toSql());
 
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.management-system.view', compact('user'));
         } else if (session('user_role') == "Event Venue Owner") {
-            $user = DB::table('event_venue_owners')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('event_venue_owners')
                 ->select('event_venue_owners.*')
-                ->where('event_venue_owners.id', $userID)
-                ->first();
+                ->where('event_venue_owners.id', $userID);
+            $user = $query->first();
+            $this->xRayController->addRdsQuery($query->toSql());
 
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.management-system.view', compact('user'));
         }
     }
@@ -47,18 +65,30 @@ class ProfileController extends Controller
         $userID = session('user')->id;
 
         if (session('user_role') == "Super Admin") {
-            $user = DB::table('super_admins')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('super_admins')
                 ->select('super_admins.*')
-                ->where('super_admins.id', $userID)
-                ->first();
+                ->where('super_admins.id', $userID);
+            $user = $query->first();
+            $this->xRayController->addRdsQuery($query->toSql());
 
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.management-system.edit', compact('user'));
         } else if (session('user_role') == "Event Venue Owner") {
-            $user = DB::table('event_venue_owners')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('event_venue_owners')
                 ->select('event_venue_owners.*')
-                ->where('event_venue_owners.id', $userID)
-                ->first();
+                ->where('event_venue_owners.id', $userID);
+            $user = $query->first();
+            $this->xRayController->addRdsQuery($query->toSql());
 
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.management-system.edit', compact('user'));
         }
     }
@@ -85,7 +115,10 @@ class ProfileController extends Controller
         $userID = session('user')->id;
 
         if (session('user_role') == "Super Admin") {
-            DB::table('super_admins')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+
+            $query = DB::table('super_admins')
                 ->where('super_admins.id', $userID)
                 ->update([
                     'first_name' => $request->firstName,
@@ -99,8 +132,15 @@ class ProfileController extends Controller
                     'country' => $request->country,
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('update super_admins where');
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
         } else if (session('user_role') == "Event Venue Owner") {
-            DB::table('event_venue_owners')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('event_venue_owners')
                 ->where('event_venue_owners.id', $userID)
                 ->update([
                     'first_name' => $request->firstName,
@@ -114,6 +154,11 @@ class ProfileController extends Controller
                     'country' => $request->country,
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('update event_venue_owners where');
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
         }
 
         return redirect('/evbs/profile')->with('success', 'Profile updated successfully!');
@@ -129,18 +174,32 @@ class ProfileController extends Controller
         $userID = session('user')->id;
 
         if (session('user_role') == "Super Admin") {
-            $user = DB::table('super_admins')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('super_admins')
                 ->select('super_admins.*')
-                ->where('super_admins.id', $userID)
-                ->first();
+                ->where('super_admins.id', $userID);
+            $user = $query->first();
 
+            $this->xRayController->addRdsQuery($query->toSql());
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.management-system.edit-password', compact('user'));
         } else if (session('user_role') == "Event Venue Owner") {
-            $user = DB::table('event_venue_owners')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('event_venue_owners')
                 ->select('event_venue_owners.*')
-                ->where('event_venue_owners.id', $userID)
-                ->first();
+                ->where('event_venue_owners.id', $userID);
+            $user = $query->first();
 
+            $this->xRayController->addRdsQuery($query->toSql());
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.management-system.edit-password', compact('user'));
         }
     }
@@ -168,19 +227,31 @@ class ProfileController extends Controller
         $userID = session('user')->id;
 
         if (session('user_role') == "Super Admin") {
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
             DB::table('super_admins')
                 ->where('super_admins.id', $userID)
                 ->update([
                     'password' => Hash::make($request->password),
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('update super_admins password');
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
         } else if (session('user_role') == "Event Venue Owner") {
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
             DB::table('event_venue_owners')
                 ->where('event_venue_owners.id', $userID)
                 ->update([
                     'password' => Hash::make($request->password),
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('update event_venue_owners password');
+
+            $this->xRayController->end();
         }
 
         return redirect('/evbs/profile')->with('success', 'Password changed successfully!');
@@ -196,12 +267,18 @@ class ProfileController extends Controller
             return redirect('/login');
         } else {
             $guestID = session('user')->id;
-
-            $guest = DB::table('guests')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('guests')
                 ->select('guests.*')
-                ->where('guests.id', $guestID)
-                ->first();
+                ->where('guests.id', $guestID);
+            $guest = $query->first();
 
+            $this->xRayController->addRdsQuery($query->toSql());
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.booking-system.view', compact('guest'));
         }
     }
@@ -213,12 +290,18 @@ class ProfileController extends Controller
             return redirect('/login');
         } else {
             $guestID = session('user')->id;
-
-            $guest = DB::table('guests')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('guests')
                 ->select('guests.*')
-                ->where('guests.id', $guestID)
-                ->first();
+                ->where('guests.id', $guestID);
+            $guest = $query->first();
 
+            $this->xRayController->addRdsQuery($query->toSql());
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.booking-system.edit', compact('guest'));
         }
     }
@@ -237,8 +320,9 @@ class ProfileController extends Controller
             ]);
 
             $guestID = session('user')->id;
-
-            DB::table('guests')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('guests')
                 ->where('guests.id', $guestID)
                 ->update([
                     'first_name' => $request->firstName,
@@ -248,6 +332,11 @@ class ProfileController extends Controller
                     'updated_at' => now()
                 ]);
 
+            $this->xRayController->addRdsQuery('update guests where');
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return redirect('/profile')->with('success', 'Profile updated successfully!');
         }
     }
@@ -259,12 +348,18 @@ class ProfileController extends Controller
             return redirect('/login');
         } else {
             $guestID = session('user')->id;
-
-            $guest = DB::table('guests')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('guests')
                 ->select('guests.*')
-                ->where('guests.id', $guestID)
-                ->first();
+                ->where('guests.id', $guestID);
+            $guest = $query->first();
 
+            $this->xRayController->addRdsQuery($query->toSql());
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('profile.booking-system.edit-password', compact('guest'));
         }
     }
@@ -289,14 +384,19 @@ class ProfileController extends Controller
             );
 
             $guestID = session('user')->id;
-
-            DB::table('guests')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+             DB::table('guests')
                 ->where('guests.id', $guestID)
                 ->update([
                     'password' => Hash::make($request->password),
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('update guests password');
 
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return redirect('/profile')->with('success', 'Password changed successfully!');
         }
     }

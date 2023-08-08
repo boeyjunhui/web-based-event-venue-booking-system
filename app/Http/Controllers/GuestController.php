@@ -6,9 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\XRayController;
 
 class GuestController extends Controller
 {
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
     /* ========================================
     Super Admin
     ======================================== */
@@ -43,7 +48,8 @@ class GuestController extends Controller
                 'password_confirmation.required' => 'The confirm password field is required.'
             ]
         );
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('guests')
             ->insert([
                 'id' => Str::random(30),
@@ -56,7 +62,10 @@ class GuestController extends Controller
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('insert into guests');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/guests')->with('success', 'Guest created successfully!');
     }
 
@@ -66,12 +75,18 @@ class GuestController extends Controller
         if (session('user_role') != "Super Admin") {
             return redirect('/evbs/login');
         }
-
-        $guests = DB::table('guests')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $query = DB::table('guests')
             ->select('guests.*')
-            ->orderBy('guests.created_at', 'desc')
-            ->get();
+            ->orderBy('guests.created_at', 'desc');
 
+        $guests = $query->get();
+
+        $this->xRayController->addRdsQuery($query->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('guests.view-all', compact('guests'));
     }
 
@@ -83,12 +98,19 @@ class GuestController extends Controller
         }
 
         $guestID = $request->segment(3);
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
 
-        $guest = DB::table('guests')
+        $query = DB::table('guests')
             ->select('guests.*')
-            ->where('guests.id', $guestID)
-            ->first();
+            ->where('guests.id', $guestID);
 
+        $guest = $query->first();
+
+        $this->xRayController->addRdsQuery($query->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('guests.view', compact('guest'));
     }
 
@@ -100,12 +122,17 @@ class GuestController extends Controller
         }
 
         $guestID = $request->segment(3);
-
-        $guest = DB::table('guests')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $query = DB::table('guests')
             ->select('guests.*')
-            ->where('guests.id', $guestID)
-            ->first();
+            ->where('guests.id', $guestID);
+        $guest = $query->first();
 
+        $this->xRayController->addRdsQuery($query->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('guests.edit', compact('guest'));
     }
 
@@ -124,7 +151,8 @@ class GuestController extends Controller
         ]);
 
         $guestID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('guests')
             ->where('guests.id', $guestID)
             ->update([
@@ -134,7 +162,10 @@ class GuestController extends Controller
                 'phone_number' => $request->phoneNumber,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('update guests where');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/guests')->with('success', 'Guest updated successfully!');
     }
 
@@ -146,12 +177,17 @@ class GuestController extends Controller
         }
 
         $guestID = $request->segment(3);
-
-        $guest = DB::table('guests')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $query = DB::table('guests')
             ->select('guests.*')
-            ->where('guests.id', $guestID)
-            ->first();
+            ->where('guests.id', $guestID);
+        $guest = $query->first();
 
+        $this->xRayController->addRdsQuery($query->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('guests.edit-password', compact('guest'));
     }
 
@@ -176,14 +212,18 @@ class GuestController extends Controller
         );
 
         $guestID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('guests')
             ->where('guests.id', $guestID)
             ->update([
                 'password' => Hash::make($request->password),
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('update guests password');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/guests/' . $guestID)->with('success', 'Password changed successfully!');
     }
 
@@ -195,14 +235,18 @@ class GuestController extends Controller
         }
 
         $guestID = $request->segment(3);
-
-        DB::table('guests')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+       DB::table('guests')
             ->where('guests.id', $guestID)
             ->update([
                 'status' => 1,
                 'updated_at' => now()
             ]);
+            $this->xRayController->addRdsQuery('guests status = 1');
+            $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/guests')->with('success', 'Guest activated successfully!');
     }
 
@@ -214,14 +258,18 @@ class GuestController extends Controller
         }
 
         $guestID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('guests')
             ->where('guests.id', $guestID)
             ->update([
                 'status' => 0,
                 'updated_at' => now()
             ]);
+            $this->xRayController->addRdsQuery('guests status = 0');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/guests')->with('success', 'Guest deactivated successfully!');
     }
 
@@ -233,11 +281,15 @@ class GuestController extends Controller
         }
 
         $guestID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('guests')
             ->where('guests.id', $guestID)
             ->delete();
+        $this->xRayController->addRdsQuery('delete from guests');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/guests')->with('success', 'Guest deleted successfully!');
     }
 }

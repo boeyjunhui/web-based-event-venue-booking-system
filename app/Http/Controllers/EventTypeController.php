@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\XRayController;
 
 class EventTypeController extends Controller
 {
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
     /* ========================================
     Super Admin
     ======================================== */
@@ -31,7 +36,8 @@ class EventTypeController extends Controller
         $request->validate([
             'eventTypeName' => 'required|unique:event_types,event_type_name'
         ]);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_types')
             ->insert([
                 'id' => Str::random(30),
@@ -40,7 +46,10 @@ class EventTypeController extends Controller
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('insert into event_types');
+        $this->xRayController->end();
 
+        $this->xRayController->submit();
         return redirect('/evbs/event-types')->with('success', 'Event type created successfully!');
     }
 
@@ -50,12 +59,17 @@ class EventTypeController extends Controller
         if (session('user_role') != "Super Admin") {
             return redirect('/evbs/login');
         }
-
-        $eventTypes = DB::table('event_types')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $eventTypesQuery = DB::table('event_types')
             ->select('event_types.*')
-            ->orderBy('event_types.created_at', 'desc')
-            ->get();
+            ->orderBy('event_types.created_at', 'desc');
+        $eventTypes = $eventTypesQuery->get();
+        $this->xRayController->addRdsQuery($eventTypesQuery->toSql());
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('event-types.view-all', compact('eventTypes'));
     }
 
@@ -67,12 +81,17 @@ class EventTypeController extends Controller
         }
 
         $eventTypeID = $request->segment(3);
-
-        $eventType = DB::table('event_types')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $eventTypeQuery = DB::table('event_types')
             ->select('event_types.*')
-            ->where('event_types.id', $eventTypeID)
-            ->first();
+            ->where('event_types.id', $eventTypeID);
+        $eventType = $eventTypeQuery->first();
+        $this->xRayController->addRdsQuery($eventTypeQuery->toSql());
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('event-types.edit', compact('eventType'));
     }
 
@@ -88,14 +107,19 @@ class EventTypeController extends Controller
         ]);
 
         $eventTypeID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_types')
             ->where('event_types.id', $eventTypeID)
             ->update([
                 'event_type_name' => $request->eventTypeName,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('update event_types where');
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return redirect('/evbs/event-types')->with('success', 'Event type updated successfully!');
     }
 
@@ -107,14 +131,19 @@ class EventTypeController extends Controller
         }
 
         $eventTypeID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_types')
             ->where('event_types.id', $eventTypeID)
             ->update([
                 'status' => 1,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('event_types status = 1');
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return redirect('/evbs/event-types')->with('success', 'Event type activated successfully!');
     }
 
@@ -126,14 +155,19 @@ class EventTypeController extends Controller
         }
 
         $eventTypeID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_types')
             ->where('event_types.id', $eventTypeID)
             ->update([
                 'status' => 0,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('event_types status = 0');
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return redirect('/evbs/event-types')->with('success', 'Event type deactivated successfully!');
     }
 
@@ -145,11 +179,17 @@ class EventTypeController extends Controller
         }
 
         $eventTypeID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('event_types')
             ->where('event_types.id', $eventTypeID)
             ->delete();
+        $this->xRayController->addRdsQuery('delete from event_types');
 
+
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return redirect('/evbs/event-types')->with('success', 'Event type deleted successfully!');
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\XRayController;
 
 class RegisterController extends Controller
 {
@@ -40,9 +41,10 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(XRayController $xRayController)
     {
         $this->middleware('guest');
+        $this->xRayController = $xRayController;
     }
 
     /**
@@ -116,8 +118,9 @@ class RegisterController extends Controller
                         'password_confirmation.required' => 'The confirm password field is required.'
                     ]
                 );
-
-                DB::table('event_venue_owners')
+                $this->xRayController->begin();
+                $this->xRayController->startRds();
+                $query = DB::table('event_venue_owners')
                     ->insert([
                         'id' => Str::random(30),
                         'first_name' => $request->firstName,
@@ -134,7 +137,11 @@ class RegisterController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                    $this->xRayController->addRdsQuery('insert into event_venue_owners');
 
+                $this->xRayController->end();
+
+                $this->xRayController->submit();
                 return redirect('/evbs/login')->with('success', 'Account registered successfully! You may sign in now.');
             }
         }
@@ -176,7 +183,8 @@ class RegisterController extends Controller
                         'password_confirmation.required' => 'The confirm password field is required.'
                     ]
                 );
-
+                $this->xRayController->begin();
+                $this->xRayController->startRds();
                 DB::table('guests')
                     ->insert([
                         'id' => Str::random(30),
@@ -189,7 +197,11 @@ class RegisterController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                    $this->xRayController->addRdsQuery('insert into guests');
 
+                    $this->xRayController->end();
+        
+                    $this->xRayController->submit();
                 return redirect('/login')->with('success', 'Account registered successfully! You may sign in now.');
             }
         }

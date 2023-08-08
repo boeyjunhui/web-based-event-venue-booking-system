@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\XRayController;
 
 class SuperAdminController extends Controller
 {
@@ -13,6 +14,12 @@ class SuperAdminController extends Controller
     Super Admin
     ======================================== */
     // display add form
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
+
+
     public function add()
     {
         if (session('user_role') != "Super Admin") {
@@ -49,7 +56,9 @@ class SuperAdminController extends Controller
             ]
         );
 
-        DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $query = DB::table('super_admins')
             ->insert([
                 'id' => Str::random(30),
                 'first_name' => $request->firstName,
@@ -67,6 +76,11 @@ class SuperAdminController extends Controller
                 'updated_at' => now()
             ]);
 
+        $this->xRayController->addRdsQuery($query->toSql());
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
+
         return redirect('/evbs/super-admins')->with('success', 'Super admin created successfully!');
     }
 
@@ -76,12 +90,20 @@ class SuperAdminController extends Controller
         if (session('user_role') != "Super Admin") {
             return redirect('/evbs/login');
         }
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
 
-        $superAdmins = DB::table('super_admins')
+        $superAdminsQuery = DB::table('super_admins')
             ->select('super_admins.*')
-            ->orderBy('super_admins.created_at', 'desc')
-            ->get();
+            ->orderBy('super_admins.created_at', 'desc');
 
+        $superAdmins = $superAdminsQuery->get();
+
+        $this->xRayController->addRdsQuery($superAdminsQuery->toSql());
+
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('super-admins.view-all', compact('superAdmins'));
     }
 
@@ -93,12 +115,18 @@ class SuperAdminController extends Controller
         }
 
         $superAdminID = $request->segment(3);
-
-        $superAdmin = DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $superAdminQuery = DB::table('super_admins')
             ->select('super_admins.*')
-            ->where('super_admins.id', $superAdminID)
-            ->first();
+            ->where('super_admins.id', $superAdminID);
+        $superAdmin = $superAdminQuery->first();
 
+        $this->xRayController->addRdsQuery($superAdminQuery->toSql());
+
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('super-admins.view', compact('superAdmin'));
     }
 
@@ -110,12 +138,18 @@ class SuperAdminController extends Controller
         }
 
         $superAdminID = $request->segment(3);
-
-        $superAdmin = DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $superAdminQuery = DB::table('super_admins')
             ->select('super_admins.*')
-            ->where('super_admins.id', $superAdminID)
-            ->first();
+            ->where('super_admins.id', $superAdminID);
+        $superAdmin = $superAdminQuery->first();
 
+        $this->xRayController->addRdsQuery($superAdminQuery->toSql());
+
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('super-admins.edit', compact('superAdmin'));
     }
 
@@ -139,7 +173,8 @@ class SuperAdminController extends Controller
         ]);
 
         $superAdminID = $request->segment(3);
-
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
         DB::table('super_admins')
             ->where('super_admins.id', $superAdminID)
             ->update([
@@ -155,6 +190,11 @@ class SuperAdminController extends Controller
                 'updated_at' => now()
             ]);
 
+        $this->xRayController->addRdsQuery('super_admins update');
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
+
         return redirect('/evbs/super-admins')->with('success', 'Super admin updated successfully!');
     }
 
@@ -166,12 +206,18 @@ class SuperAdminController extends Controller
         }
 
         $superAdminID = $request->segment(3);
-
-        $superAdmin = DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+        $superAdminQuery = DB::table('super_admins')
             ->select('super_admins.*')
-            ->where('super_admins.id', $superAdminID)
-            ->first();
+            ->where('super_admins.id', $superAdminID);
+        $superAdmin = $superAdminQuery->first();
 
+        $this->xRayController->addRdsQuery($superAdminQuery->toSql());
+
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return view('super-admins.edit-password', compact('superAdmin'));
     }
 
@@ -196,13 +242,21 @@ class SuperAdminController extends Controller
         );
 
         $superAdminID = $request->segment(3);
-
-        DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+         DB::table('super_admins')
             ->where('super_admins.id', $superAdminID)
             ->update([
                 'password' => Hash::make($request->password),
                 'updated_at' => now()
             ]);
+
+
+        $this->xRayController->addRdsQuery('super_admins update password');
+
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
 
         return redirect('/evbs/super-admins/' . $superAdminID)->with('success', 'Password changed successfully!');
     }
@@ -215,14 +269,19 @@ class SuperAdminController extends Controller
         }
 
         $superAdminID = $request->segment(3);
-
-        DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+         DB::table('super_admins')
             ->where('super_admins.id', $superAdminID)
             ->update([
                 'status' => 1,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('super_admins status = 1');
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return redirect('/evbs/super-admins')->with('success', 'Super admin activated successfully!');
     }
 
@@ -234,14 +293,19 @@ class SuperAdminController extends Controller
         }
 
         $superAdminID = $request->segment(3);
-
-        DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+         DB::table('super_admins')
             ->where('super_admins.id', $superAdminID)
             ->update([
                 'status' => 0,
                 'updated_at' => now()
             ]);
+        $this->xRayController->addRdsQuery('super_admins status = 0');
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return redirect('/evbs/super-admins')->with('success', 'Super admin deactivated successfully!');
     }
 
@@ -253,11 +317,16 @@ class SuperAdminController extends Controller
         }
 
         $superAdminID = $request->segment(3);
-
-        DB::table('super_admins')
+        $this->xRayController->begin();
+        $this->xRayController->startRds();
+         DB::table('super_admins')
             ->where('super_admins.id', $superAdminID)
             ->delete();
+        $this->xRayController->addRdsQuery('super_admins delete');
 
+        $this->xRayController->end();
+
+        $this->xRayController->submit();
         return redirect('/evbs/super-admins')->with('success', 'Super admin deleted successfully!');
     }
 }

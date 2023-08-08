@@ -6,9 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use App\Http\Controllers\XRayController;
 
+
+//todo xray
 class EventVenueController extends Controller
 {
+
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
     /* ========================================
     Super Admin & Event Venue Owner
     ======================================== */

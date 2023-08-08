@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\XRayController;
 
 class ForgotPasswordController extends Controller
 {
@@ -25,9 +26,16 @@ class ForgotPasswordController extends Controller
 
     use SendsPasswordResetEmails;
 
+    protected $xRayController;
+    public function __construct(XRayController $xRayController)
+    {
+        $this->xRayController = $xRayController;
+    }
+
     /* ========================================
     Super Admin & Event Venue Owner
     ======================================== */
+
     // forgot password form
     public function displayForgotPasswordForm()
     {
@@ -49,14 +57,23 @@ class ForgotPasswordController extends Controller
             ]);
 
             // check if email exists, if exists, send a reset password email, else return an error message
-            $superAdmin = DB::table('super_admins')
-                ->where('super_admins.email', $data['email'])
-                ->first();
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
 
-            $eventVenueOwner = DB::table('event_venue_owners')
-                ->where('event_venue_owners.email', $data['email'])
-                ->first();
+            $superAdminQuery = DB::table('super_admins')
+                ->where('super_admins.email', $data['email']);
+            $superAdmin = $superAdminQuery->first();
 
+            $this->xRayController->addRdsQuery($superAdminQuery->toSql());
+
+            $eventVenueOwnerQuery = DB::table('event_venue_owners')
+                ->where('event_venue_owners.email', $data['email']);
+            $eventVenueOwner = $eventVenueOwnerQuery->first();
+            $this->xRayController->addRdsQuery($eventVenueOwnerQuery->toSql());
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             if ($superAdmin != "" || $eventVenueOwner != "") {
                 $token = Str::random(64);
 
@@ -117,24 +134,32 @@ class ForgotPasswordController extends Controller
                     'password_confirmation.required' => 'The confirm new password field is required.'
                 ]
             );
-
-            $emailTokenStatus = DB::table('password_resets')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $emailTokenStatusQuery = DB::table('password_resets')
                 ->where('password_resets.email', $request->email)
                 ->where('password_resets.token', $request->token)
-                ->where('password_resets.status', 0)
-                ->first();
+                ->where('password_resets.status', 0);
 
-            $validEmailToken = DB::table('password_resets')
+            $emailTokenStatus = $emailTokenStatusQuery->first();
+            $this->xRayController->addRdsQuery($emailTokenStatusQuery->toSql());
+
+            $validEmailTokenQuery = DB::table('password_resets')
                 ->where('password_resets.email', $request->email)
                 ->where('password_resets.token', $request->token)
-                ->where('password_resets.status', 1)
-                ->first();
+                ->where('password_resets.status', 1);
+            $validEmailToken = $validEmailTokenQuery->first();
+            $this->xRayController->addRdsQuery($validEmailTokenQuery->toSql());
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
 
             if ($emailTokenStatus) {
                 return back()->withInput()->with('error', 'This reset password link has been used!');
             } else if (!$validEmailToken) {
                 return back()->withInput()->with('error', 'Invalid email and token!');
             } else {
+
                 $superAdmin = DB::table('super_admins')
                     ->where('super_admins.email', $data['email'])
                     ->first();
@@ -198,14 +223,21 @@ class ForgotPasswordController extends Controller
             ]);
 
             // check if email exists, if exists, send a reset password email, else return an error message
-            $guest = DB::table('guests')
-                ->where('guests.email', $data['email'])
-                ->first();
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $query = DB::table('guests')
+                ->where('guests.email', $data['email']);
+            $guest = $query->first();
+            $this->xRayController->addRdsQuery($query->toSql());
 
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             if ($guest != "") {
                 $token = Str::random(64);
-
-                DB::table('password_resets')
+                $this->xRayController->begin();
+                $this->xRayController->startRds();
+                $query = DB::table('password_resets')
                     ->insert([
                         'id' => Str::random(30),
                         'email' => $data['email'],
@@ -214,7 +246,11 @@ class ForgotPasswordController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                $this->xRayController->addRdsQuery($query->toSql());
 
+                $this->xRayController->end();
+
+                $this->xRayController->submit();
                 Mail::send('emails.booking-system.forgot-password', ['token' => $token, 'name' => $guest->first_name . ' ' . $guest->last_name], function ($message) use ($request) {
                     $message->to($request->email);
                     $message->subject('Reset Password');
@@ -255,24 +291,37 @@ class ForgotPasswordController extends Controller
                     'password_confirmation.required' => 'The confirm new password field is required.'
                 ]
             );
-
-            $emailTokenStatus = DB::table('password_resets')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $emailTokenStatusQuery = DB::table('password_resets')
                 ->where('password_resets.email', $request->email)
                 ->where('password_resets.token', $request->token)
-                ->where('password_resets.status', 0)
-                ->first();
+                ->where('password_resets.status', 0);
+            $emailTokenStatus = $emailTokenStatusQuery->first();
 
-            $validEmailToken = DB::table('password_resets')
+            $this->xRayController->addRdsQuery($emailTokenStatusQuery->toSql());
+
+            $validEmailTokenQuery = DB::table('password_resets')
                 ->where('password_resets.email', $request->email)
                 ->where('password_resets.token', $request->token)
                 ->where('password_resets.status', 1)
                 ->first();
+            $validEmailToken = $validEmailTokenQuery->first();
 
+            $this->xRayController->addRdsQuery($validEmailTokenQuery->toSql());
+    
             if ($emailTokenStatus) {
+                $this->xRayController->end();
+
+                $this->xRayController->submit();
                 return back()->withInput()->with('error', 'This reset password link has been used!');
             } else if (!$validEmailToken) {
+                $this->xRayController->end();
+
+                $this->xRayController->submit();
                 return back()->withInput()->with('error', 'Invalid email and token!');
             } else {
+                //todo xray
                 $guest = DB::table('guests')
                     ->where('guests.email', $data['email'])
                     ->first();
@@ -294,6 +343,9 @@ class ForgotPasswordController extends Controller
                         'updated_at' => now()
                     ]);
 
+                    $this->xRayController->end();
+
+                    $this->xRayController->submit();
                 return redirect('/login')->with('success', 'Your password has been changed successfully, you may sign in with your new password!');
             }
         }
