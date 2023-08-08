@@ -5,3 +5,5 @@
 @include('layouts.booking-system.footer')
 
 @include('layouts.xray.end-xray')
+
+
