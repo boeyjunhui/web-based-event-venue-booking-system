@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\File;
 use App\Http\Controllers\XRayController;
 
 
-//todo xray
 class EventVenueController extends Controller
 {
 
@@ -26,18 +25,27 @@ class EventVenueController extends Controller
         if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         } else {
-            $eventVenueOwners = DB::table('event_venue_owners')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $eventVenueOwnersQuery = DB::table('event_venue_owners')
                 ->select('event_venue_owners.id', 'event_venue_owners.first_name', 'event_venue_owners.last_name', 'event_venue_owners.email')
                 ->where('event_venue_owners.status', 1)
-                ->orderBy('event_venue_owners.created_at', 'asc')
-                ->get();
+                ->orderBy('event_venue_owners.created_at', 'asc');
+            $eventVenueOwners = $eventVenueOwnersQuery->get();
+            $this->xRayController->addRdsQuery($eventVenueOwnersQuery->toSql());
 
-            $eventTypes = DB::table('event_types')
+            $this->xRayController->startRds();
+            $eventTypesQuery = DB::table('event_types')
                 ->select('event_types.id', 'event_types.event_type_name')
                 ->where('event_types.status', 1)
-                ->orderBy('event_types.created_at', 'asc')
-                ->get();
+                ->orderBy('event_types.created_at', 'asc');
 
+            $eventTypes = $eventTypesQuery->get();
+            $this->xRayController->addRdsQuery($eventTypesQuery->toSql());
+
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return view('event-venues.management-system.add', compact('eventVenueOwners', 'eventTypes'));
         }
     }
@@ -96,8 +104,10 @@ class EventVenueController extends Controller
             // event venue images
             $image = [];
             $combinedEventVenueImages = [];
+            $this->xRayController->begin();
 
             if (!empty($request->eventVenueImages)) {
+
                 foreach ($request->eventVenueImages as $image) {
                     $randomString = Str::random(30);
                     $eventVenueImagesFilename = $randomString . '.' . $image->getClientOriginalExtension();
@@ -110,6 +120,8 @@ class EventVenueController extends Controller
                     // Create S3 client
                     $s3 = \App::make('aws')->createClient('s3');
                     try {
+                        $this->xRayController->startS3();
+
                         $result = $s3->putObject([
                             'Bucket' => env('AWS_BUCKET'),
                             'Key' => 'uploads/event-venues/' . $eventVenueImagesFilename,
@@ -117,12 +129,17 @@ class EventVenueController extends Controller
                             'ACL' => 'public-read',
                             'ContentType' => $contentType,
                         ]);
+                        $this->xRayController->end();
+
                     } catch (\Aws\S3\Exception\S3Exception $e) {
                         // Catch any S3 exceptions and return an error message
                         print($e->getMessage());
+                        // dd($e);//
+                        $this->xRayController->errorS3($e);
                     }
                     $combinedEventVenueImages[] = $eventVenueImagesFilename;
                 }
+
 
                 $allEventVenueImages = implode(',', $combinedEventVenueImages);
             } else {
@@ -130,6 +147,7 @@ class EventVenueController extends Controller
             }
 
             if (session('user_role') == "Super Admin") {
+                $this->xRayController->startRds();
                 DB::table('event_venues')
                     ->insert([
                         'id' => Str::random(30),
@@ -157,7 +175,11 @@ class EventVenueController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                $this->xRayController->addRdsQuery('insert into event_venues');
+
             } else if (session('user_role') == "Event Venue Owner") {
+                $this->xRayController->startRds();
+
                 DB::table('event_venues')
                     ->insert([
                         'id' => Str::random(30),
@@ -185,7 +207,9 @@ class EventVenueController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
+                $this->xRayController->addRdsQuery('insert into event_venues');
             }
+            $this->xRayController->submit();
 
             return redirect('/evbs/event-venues')->with('success', 'Event venue created successfully!');
         }
@@ -197,24 +221,34 @@ class EventVenueController extends Controller
         if (session('user_role') != "Super Admin" && session('user_role') != "Event Venue Owner") {
             return redirect('/evbs/login');
         } else {
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
             if (session('user_role') == "Super Admin") {
-                $eventVenues = DB::table('event_venues')
+
+                $eventVenuesQuery = DB::table('event_venues')
                     ->select('event_venues.*', 'event_venue_owners.first_name', 'event_venue_owners.last_name', 'event_types.event_type_name')
                     ->join('event_venue_owners', 'event_venue_owners.id', '=', 'event_venues.event_venue_owner_id')
                     ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
-                    ->orderBy('event_venues.created_at', 'desc')
-                    ->get();
+                    ->orderBy('event_venues.created_at', 'desc');
+                $eventVenues = $eventVenuesQuery->get();
+                $this->xRayController->addRdsQuery($eventVenuesQuery->toSql());
+                $this->xRayController->end();
             } else if (session('user_role') == "Event Venue Owner") {
                 $eventVenueOwnerID = session('user')->id;
 
-                $eventVenues = DB::table('event_venues')
+                $eventVenuesQuery = DB::table('event_venues')
                     ->select('event_venues.*', 'event_venue_owners.first_name', 'event_venue_owners.last_name', 'event_types.event_type_name')
                     ->join('event_venue_owners', 'event_venue_owners.id', '=', 'event_venues.event_venue_owner_id')
                     ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
                     ->where('event_venues.event_venue_owner_id', $eventVenueOwnerID)
-                    ->orderBy('event_venues.created_at', 'desc')
-                    ->get();
+                    ->orderBy('event_venues.created_at', 'desc');
+
+                $eventVenues = $eventVenuesQuery->get();
+
+                $this->xRayController->addRdsQuery($eventVenuesQuery->toSql());
+                $this->xRayController->end();
             }
+            $this->xRayController->submit();
 
             return view('event-venues.management-system.view-all', compact('eventVenues'));
         }
@@ -227,13 +261,18 @@ class EventVenueController extends Controller
             return redirect('/evbs/login');
         } else {
             $eventVenueID = $request->segment(3);
-
-            $eventVenue = DB::table('event_venues')
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
+            $eventVenueQuery = DB::table('event_venues')
                 ->select('event_venues.*', 'event_venue_owners.first_name', 'event_venue_owners.last_name', 'event_types.event_type_name')
                 ->join('event_venue_owners', 'event_venue_owners.id', '=', 'event_venues.event_venue_owner_id')
                 ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
-                ->where('event_venues.id', $eventVenueID)
-                ->first();
+                ->where('event_venues.id', $eventVenueID);
+            $eventVenue = $eventVenueQuery->first();
+
+            $this->xRayController->addRdsQuery($eventVenueQuery->toSql());
+            $this->xRayController->end();
+            $this->xRayController->submit();
 
             return view('event-venues.management-system.view', compact('eventVenue'));
         }
@@ -246,23 +285,33 @@ class EventVenueController extends Controller
             return redirect('/evbs/login');
         } else {
             $eventVenueID = $request->segment(3);
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
 
             $eventVenue = DB::table('event_venues')
                 ->select('event_venues.*')
                 ->where('event_venues.id', $eventVenueID)
                 ->first();
+            $this->xRayController->addRdsQuery(' dd');
+            $this->xRayController->startRds();
 
             $eventVenueOwners = DB::table('event_venue_owners')
                 ->select('event_venue_owners.id', 'event_venue_owners.first_name', 'event_venue_owners.last_name', 'event_venue_owners.email')
                 ->where('event_venue_owners.status', 1)
                 ->orderBy('event_venue_owners.created_at', 'asc')
                 ->get();
+            $this->xRayController->addRdsQuery(' dd');
+            $this->xRayController->startRds();
 
             $eventTypes = DB::table('event_types')
                 ->select('event_types.id', 'event_types.event_type_name')
                 ->where('event_types.status', 1)
                 ->orderBy('event_types.created_at', 'asc')
                 ->get();
+            $this->xRayController->addRdsQuery(' dd');
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
 
             return view('event-venues.management-system.edit', compact('eventVenue', 'eventVenueOwners', 'eventTypes'));
         }
@@ -320,12 +369,15 @@ class EventVenueController extends Controller
             }
 
             $eventVenueID = $request->segment(3);
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
 
-            $eventVenue = DB::table('event_venues')
+            $eventVenueQuery = DB::table('event_venues')
                 ->select('event_venues.*')
-                ->where('event_venues.id', $eventVenueID)
-                ->first();
+                ->where('event_venues.id', $eventVenueID);
+            $eventVenue = $eventVenueQuery->first();
 
+            $this->xRayController->addRdsQuery($eventVenueQuery->toSql());
             // add new event venue images if not exist, merge existing & new event venue images if exist
             $eventVenueImagesOldFilename = $eventVenue->event_venue_images;
             $image = [];
@@ -344,6 +396,8 @@ class EventVenueController extends Controller
                     // Create S3 client
                     $s3 = \App::make('aws')->createClient('s3');
                     try {
+                        $this->xRayController->startS3();
+
                         $result = $s3->putObject([
                             'Bucket' => env('AWS_BUCKET'),
                             'Key' => 'uploads/event-venues/' . $eventVenueImagesFilename,
@@ -351,9 +405,13 @@ class EventVenueController extends Controller
                             'ACL' => 'public-read',
                             'ContentType' => $contentType,
                         ]);
+                        $this->xRayController->end();
+
                     } catch (\Aws\S3\Exception\S3Exception $e) {
                         // Catch any S3 exceptions and return an error message
                         print($e->getMessage());
+                        $this->xRayController->errorS3($e);
+
                     }
 
 
@@ -380,6 +438,8 @@ class EventVenueController extends Controller
             }
 
             if (session('user_role') == "Super Admin") {
+                $this->xRayController->startRds();
+
                 DB::table('event_venues')
                     ->where('event_venues.id', $eventVenueID)
                     ->update([
@@ -405,7 +465,11 @@ class EventVenueController extends Controller
                         'event_venue_images' => $allEventVenueImages,
                         'updated_at' => now()
                     ]);
+                $this->xRayController->addRdsQuery('select event_venues where');
+
             } else if (session('user_role') == "Event Venue Owner") {
+                $this->xRayController->startRds();
+
                 DB::table('event_venues')
                     ->where('event_venues.id', $eventVenueID)
                     ->update([
@@ -430,8 +494,12 @@ class EventVenueController extends Controller
                         'event_venue_images' => $allEventVenueImages,
                         'updated_at' => now()
                     ]);
-            }
+                $this->xRayController->addRdsQuery('select event_venues where');
 
+            }
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return redirect('/evbs/event-venues')->with('success', 'Event venue updated successfully!');
         }
     }
@@ -443,14 +511,18 @@ class EventVenueController extends Controller
             return redirect('/evbs/login');
         } else {
             $eventVenueID = $request->segment(3);
-
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
             DB::table('event_venues')
                 ->where('event_venues.id', $eventVenueID)
                 ->update([
                     'status' => 1,
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('event_venues status = 1');
+            $this->xRayController->end();
 
+            $this->xRayController->submit();
             return redirect('/evbs/event-venues')->with('success', 'Event venue activated successfully!');
         }
     }
@@ -462,14 +534,18 @@ class EventVenueController extends Controller
             return redirect('/evbs/login');
         } else {
             $eventVenueID = $request->segment(3);
-
+            $this->xRayController->begin();
+            $this->xRayController->startRds();
             DB::table('event_venues')
                 ->where('event_venues.id', $eventVenueID)
                 ->update([
                     'status' => 0,
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('event_venues status = 0');
+            $this->xRayController->end();
 
+            $this->xRayController->submit();
             return redirect('/evbs/event-venues')->with('success', 'Event venue deactivated successfully!');
         }
     }
@@ -484,15 +560,22 @@ class EventVenueController extends Controller
 
             $singleEventVenueImage = $request->singleEventVenueImage;
             // Create S3 client
+            $this->xRayController->begin();
+
             $s3 = \App::make('aws')->createClient('s3');
             try {
+                $this->xRayController->startS3();
+
                 $result = $s3->deleteObject([
                     'Bucket' => env('AWS_BUCKET'),
                     'Key' => 'uploads/event-venues/' . $singleEventVenueImage,
                 ]);
+                $this->xRayController->end();
+
             } catch (\Aws\S3\Exception\S3Exception $e) {
                 // Catch any S3 exceptions and return an error message
                 print($e->getMessage());
+                $this->xRayController->errorS3($e);
             }
             $existingEventVenueImages = [];
             $existingEventVenueImages = explode(',', $request->eventVenueImages);
@@ -507,6 +590,7 @@ class EventVenueController extends Controller
             $sortEventVenueImages = array_values($existingEventVenueImages);
 
             $newEventVenueImages = implode(',', $sortEventVenueImages);
+            $this->xRayController->startRds();
 
             DB::table('event_venues')
                 ->where('event_venues.id', $eventVenueID)
@@ -514,7 +598,11 @@ class EventVenueController extends Controller
                     'event_venue_images' => $newEventVenueImages,
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('delete from event_venues');
 
+            $this->xRayController->end();
+
+            $this->xRayController->submit();
             return redirect('/evbs/event-venues/' . $eventVenueID)->with('success', 'Event venue image deleted successfully!');
         }
     }
@@ -529,27 +617,37 @@ class EventVenueController extends Controller
 
             $allEventVenueImages = [];
             $allEventVenueImages = explode(',', $request->allEventVenueImages);
+            $this->xRayController->begin();
 
             for ($i = 0; $i < count($allEventVenueImages); $i++) {
                 $s3 = \App::make('aws')->createClient('s3');
                 try {
+                    $this->xRayController->startS3();
+
                     $result = $s3->deleteObject([
                         'Bucket' => env('AWS_BUCKET'),
                         'Key' => 'uploads/event-venues/' . $allEventVenueImages[$i],
                     ]);
+                    $this->xRayController->end();
+
                 } catch (\Aws\S3\Exception\S3Exception $e) {
                     // Catch any S3 exceptions and return an error message
                     print($e->getMessage());
+                    $this->xRayController->errorS3($e);
+
                 }
             }
-
+            $this->xRayController->startRds();
             DB::table('event_venues')
                 ->where('event_venues.id', $eventVenueID)
                 ->update([
                     'event_venue_images' => "",
                     'updated_at' => now()
                 ]);
+            $this->xRayController->addRdsQuery('delete from event_venues');
+            $this->xRayController->end();
 
+            $this->xRayController->submit();
             return redirect('/evbs/event-venues/' . $eventVenueID)->with('success', 'All event venue images deleted successfully!');
         }
     }
@@ -561,7 +659,7 @@ class EventVenueController extends Controller
             return redirect('/evbs/login');
         } else {
             $eventVenueID = $request->segment(3);
-
+            $this->xRayController->begin();
             // delete event venue images from file directory
             $eventVenueImages = [];
             $eventVenueImages = explode(',', $request->eventVenueImages);
@@ -569,20 +667,29 @@ class EventVenueController extends Controller
             for ($i = 0; $i < count($eventVenueImages); $i++) {
                 $s3 = \App::make('aws')->createClient('s3');
                 try {
+                    $this->xRayController->startS3();
                     $result = $s3->deleteObject([
                         'Bucket' => env('AWS_BUCKET'),
                         'Key' => 'uploads/event-venues/' . $eventVenueImages[$i],
                     ]);
+                    $this->xRayController->end();
+
                 } catch (\Aws\S3\Exception\S3Exception $e) {
                     // Catch any S3 exceptions and return an error message
                     print($e->getMessage());
+                    $this->xRayController->errorS3($e);
+
                 }
             }
+            $this->xRayController->startRds();
 
             DB::table('event_venues')
                 ->where('event_venues.id', $eventVenueID)
                 ->delete();
+            $this->xRayController->addRdsQuery('delete from event_venues');
+            $this->xRayController->end();
 
+            $this->xRayController->submit();
             return redirect('/evbs/event-venues')->with('success', 'Event venue deleted successfully!');
         }
     }
@@ -593,65 +700,95 @@ class EventVenueController extends Controller
     // view event venue
     public function viewEventVenue()
     {
-        $eventTypes = DB::table('event_types')
+        // $this->xRayController->begin();
+        // $this->xRayController->startRds();
+        $eventTypesQuery = DB::table('event_types')
             ->select('event_types.*')
             ->where('event_types.status', 1)
-            ->orderBy('event_types.created_at', 'asc')
-            ->get();
+            ->orderBy('event_types.created_at', 'asc');
+        $eventTypes = $eventTypesQuery->get();
 
-        $eventVenues = DB::table('event_venues')
+        // $this->xRayController->addRdsQuery($eventTypesQuery->toSql());
+        // $this->xRayController->startRds();
+
+        $eventVenuesQuery = DB::table('event_venues')
             ->select('event_venues.id', 'event_venues.event_venue_name', 'event_venues.city', 'event_venues.maximum_guests', 'event_venues.event_venue_images', 'event_types.event_type_name')
             ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
             ->where('event_venues.status', 1)
-            ->orderBy('event_venues.created_at', 'asc')
-            ->get();
+            ->orderBy('event_venues.created_at', 'asc');
+        $eventVenues = $eventVenuesQuery->get();
 
+        // $this->xRayController->addRdsQuery($eventVenuesQuery->toSql());
+        // $this->xRayController->end();
+
+        // $this->xRayController->submit();
         return view('event-venues.booking-system.view-all', compact('eventTypes', 'eventVenues'));
     }
 
     // view specific event type's event venue
     public function viewSpecificEventTypeVenue(Request $request)
     {
-        $eventTypes = DB::table('event_types')
+        // $this->xRayController->begin();
+        // $this->xRayController->startRds();
+        $eventTypesQuery = DB::table('event_types')
             ->select('event_types.*')
             ->where('event_types.status', 1)
-            ->orderBy('event_types.created_at', 'asc')
-            ->get();
+            ->orderBy('event_types.created_at', 'asc');
+        $eventTypes = $eventTypesQuery->get();
+
+        // $this->xRayController->addRdsQuery($eventTypesQuery->toSql());
 
         $eventType = $request->eventType;
+        // $this->xRayController->startRds();
 
-        $eventVenues = DB::table('event_venues')
+        $eventVenuesQuery = DB::table('event_venues')
             ->select('event_venues.id', 'event_venues.event_venue_name', 'event_venues.city', 'event_venues.maximum_guests', 'event_venues.event_venue_images', 'event_types.event_type_name')
             ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
             ->where('event_venues.event_type_id', $eventType)
             ->where('event_venues.status', 1)
-            ->orderBy('event_venues.created_at', 'asc')
-            ->get();
+            ->orderBy('event_venues.created_at', 'asc');
+        $eventVenues = $eventVenuesQuery->get();
 
+        // $this->xRayController->addRdsQuery($eventVenuesQuery->toSql());
+
+        // $this->xRayController->end();
+
+        // $this->xRayController->submit();
         return view('event-venues.booking-system.view-all', compact('eventTypes', 'eventVenues'));
     }
 
     // search event venue
     public function searchEventVenue(Request $request)
     {
-        $eventTypes = DB::table('event_types')
+        // $this->xRayController->begin();
+
+        // $this->xRayController->startRds();
+
+        $eventTypesQuery = DB::table('event_types')
             ->select('event_types.*')
             ->where('event_types.status', 1)
-            ->orderBy('event_types.created_at', 'asc')
-            ->get();
+            ->orderBy('event_types.created_at', 'asc');
+
+        $eventTypes = $eventTypesQuery->get();
+        // $this->xRayController->addRdsQuery($eventTypesQuery->toSql());
 
         $search = $request->search;
+        // $this->xRayController->startRds();
 
-        $eventVenues = DB::table('event_venues')
+        $eventVenuesQuery = DB::table('event_venues')
             ->select('event_venues.id', 'event_venues.event_venue_name', 'event_venues.city', 'event_venues.maximum_guests', 'event_venues.event_venue_images', 'event_types.event_type_name')
             ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
             ->where('event_venues.event_venue_name', 'like', "%{$search}%")
             ->orWhere('event_venues.city', 'like', "%{$search}%")
             ->orWhere('event_venues.state', 'like', "%{$search}%")
             ->where('event_venues.status', 1)
-            ->orderBy('event_venues.created_at', 'asc')
-            ->get();
+            ->orderBy('event_venues.created_at', 'asc');
+        $eventVenues = $eventVenuesQuery->get();
 
+        // $this->xRayController->addRdsQuery($eventVenuesQuery->toSql());
+        // $this->xRayController->end();
+
+        // $this->xRayController->submit();
         return view('event-venues.booking-system.view-all', compact('eventTypes', 'eventVenues'));
     }
 }

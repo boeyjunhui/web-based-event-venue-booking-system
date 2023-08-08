@@ -1,4 +1,4 @@
-@include('layouts.xray.start-xray', ['name' => 'urban-space-test.us-east-1.elasticbeanstalk.com/evbs'])
+@include('layouts.xray.start-xray', ['name' => 'urban-space.us-east-1.elasticbeanstalk.com'])
 
 <!DOCTYPE html>
 <html lang="en">

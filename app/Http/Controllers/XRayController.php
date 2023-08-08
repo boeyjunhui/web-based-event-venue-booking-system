@@ -36,8 +36,17 @@ class XRayController extends Controller
                     ->setName('s3:uplods/event-venues')
                     ->begin(100)
             );
-
-
+    }
+    public function startSNS()
+    {
+        
+        Trace::getInstance()
+            ->getCurrentSegment()
+            ->addSubsegment(
+                (new RemoteSegment())
+                    ->setName('SNS')
+                    ->begin(100)
+            );
     }
     public function errorS3($e) {
         Trace::getInstance()
@@ -74,6 +83,10 @@ class XRayController extends Controller
             // ->setResponseCode(http_response_code())
             // ->submit(new DaemonSegmentSubmitter());
     }
+
+
+
+
 
     public function end()
     {
