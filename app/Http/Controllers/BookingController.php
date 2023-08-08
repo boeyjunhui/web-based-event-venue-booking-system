@@ -660,8 +660,7 @@ class BookingController extends Controller
         $eventVenueQuery = DB::table('event_venues')
             ->select('event_venues.*', 'event_types.event_type_name')
             ->join('event_types', 'event_types.id', '=', 'event_venues.event_type_id')
-            ->where('event_venues.id', $eventVenueID)
-            ->first();
+            ->where('event_venues.id', $eventVenueID);
         $eventVenue = $eventVenueQuery->first();
         $this->xRayController->addRdsQuery($eventVenueQuery->toSql());
         $this->xRayController->end();
