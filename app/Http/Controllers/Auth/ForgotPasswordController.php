@@ -299,8 +299,8 @@ class ForgotPasswordController extends Controller
                 ->where('password_resets.status', 0);
             $emailTokenStatus = $emailTokenStatusQuery->first();
             
-            $this->xRayController->startRds();
             $this->xRayController->addRdsQuery($emailTokenStatusQuery->toSql());
+            $this->xRayController->startRds();
 
             $validEmailTokenQuery = DB::table('password_resets')
                 ->where('password_resets.email', $request->email)
