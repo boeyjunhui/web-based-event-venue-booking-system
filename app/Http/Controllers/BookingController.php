@@ -179,7 +179,7 @@ class BookingController extends Controller
             // booking sms
             $params = [
                 'Message' => 'We\'ve received your quotation request for ' . $eventVenue->event_venue_name . '. Please refer to your email for official quotation.',
-                'PhoneNumber' => '+60132911366',
+                'PhoneNumber' => $guest->phone_number,
             ];
             $this->xRayController->startSNS();
             $sns = \Illuminate\Support\Facades\App::make('aws')->createClient('sns');
@@ -731,7 +731,7 @@ class BookingController extends Controller
             // booking sms
             $params = [
                 'Message' => 'We\'ve received your quotation request for ' . $eventVenue->event_venue_name . '. Please refer to your email for official quotation.',
-                'PhoneNumber' => '+60132911366',
+                'PhoneNumber' => $guest->phone_number,
             ];
             $this->xRayController->startSNS();
             $sns = \Illuminate\Support\Facades\App::make('aws')->createClient('sns');
