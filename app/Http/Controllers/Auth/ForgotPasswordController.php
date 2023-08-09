@@ -305,8 +305,7 @@ class ForgotPasswordController extends Controller
             $validEmailTokenQuery = DB::table('password_resets')
                 ->where('password_resets.email', $request->email)
                 ->where('password_resets.token', $request->token)
-                ->where('password_resets.status', 1)
-                ->first();
+                ->where('password_resets.status', 1);
             $validEmailToken = $validEmailTokenQuery->first();
 
             $this->xRayController->addRdsQuery($validEmailTokenQuery->toSql());
@@ -322,7 +321,6 @@ class ForgotPasswordController extends Controller
                 $this->xRayController->submit();
                 return back()->withInput()->with('error', 'Invalid email and token!');
             } else {
-                //todo xray
                 $guest = DB::table('guests')
                     ->where('guests.email', $data['email'])
                     ->first();
