@@ -246,7 +246,7 @@ class ForgotPasswordController extends Controller
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
-                $this->xRayController->addRdsQuery($query->toSql());
+                $this->xRayController->addRdsQuery('insert into password_resets');
 
                 $this->xRayController->end();
 
