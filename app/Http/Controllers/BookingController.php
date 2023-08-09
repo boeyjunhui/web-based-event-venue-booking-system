@@ -242,8 +242,8 @@ class BookingController extends Controller
                     ->where('bookings.booking_type', 1)
                     ->orderBy('bookings.created_at', 'desc');
                 $guestBookings = $guestBookingsQuery->get();
-
                 $this->xRayController->addRdsQuery($guestBookingsQuery->toSql());
+
             } else if (session('user_role') == "Event Venue Owner") {
                 $eventVenueOwnerID = session('user')->id;
 
@@ -255,7 +255,6 @@ class BookingController extends Controller
                     ->where('event_venues.event_venue_owner_id', $eventVenueOwnerID)
                     ->orderBy('bookings.created_at', 'desc');
                 $guestBookings = $guestBookingsQuery->get();
-
                 $this->xRayController->addRdsQuery($guestBookingsQuery->toSql());
             }
             $this->xRayController->end();
@@ -409,12 +408,11 @@ class BookingController extends Controller
                 $eventVenues = $eventVenuesQuery->get();
                 $this->xRayController->addRdsQuery($eventVenuesQuery->toSql());
             }
-
+            $this->xRayController->startRds();
             $venueBlockingQuery = DB::table('bookings')
                 ->select('bookings.*', 'event_venues.event_venue_name')
                 ->join('event_venues', 'event_venues.id', '=', 'bookings.event_venue_id')
-                ->where('bookings.id', $bookingID)
-                ->first();
+                ->where('bookings.id', $bookingID);
             $venueBlocking = $venueBlockingQuery->first();
             $this->xRayController->addRdsQuery($venueBlockingQuery->toSql());
             $this->xRayController->end();

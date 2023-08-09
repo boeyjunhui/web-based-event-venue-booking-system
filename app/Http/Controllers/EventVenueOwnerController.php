@@ -199,8 +199,7 @@ class EventVenueOwnerController extends Controller
         $this->xRayController->startRds();
         $query = DB::table('event_venue_owners')
             ->select('event_venue_owners.*')
-            ->where('event_venue_owners.id', $eventVenueOwnerID)
-            ->first();
+            ->where('event_venue_owners.id', $eventVenueOwnerID);
         $eventVenueOwner = $query->first();
 
         $this->xRayController->addRdsQuery($query->toSql());

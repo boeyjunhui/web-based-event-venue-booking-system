@@ -76,7 +76,7 @@ class SuperAdminController extends Controller
                 'updated_at' => now()
             ]);
 
-        $this->xRayController->addRdsQuery($query->toSql());
+        $this->xRayController->addRdsQuery('insert into super_admins');
         $this->xRayController->end();
 
         $this->xRayController->submit();
