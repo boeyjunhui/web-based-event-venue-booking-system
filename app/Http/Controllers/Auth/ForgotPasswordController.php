@@ -65,6 +65,7 @@ class ForgotPasswordController extends Controller
             $superAdmin = $superAdminQuery->first();
 
             $this->xRayController->addRdsQuery($superAdminQuery->toSql());
+            $this->xRayController->startRds();
 
             $eventVenueOwnerQuery = DB::table('event_venue_owners')
                 ->where('event_venue_owners.email', $data['email']);
@@ -230,9 +231,8 @@ class ForgotPasswordController extends Controller
             $guest = $query->first();
             $this->xRayController->addRdsQuery($query->toSql());
 
-            $this->xRayController->end();
+            $this->xRayController->startRds();
 
-            $this->xRayController->submit();
             if ($guest != "") {
                 $token = Str::random(64);
                 $this->xRayController->begin();
