@@ -30,5 +30,11 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    'sns' => [
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION'),
+        'sms_type' => 'Transactional', // Can be 'Promotional' or 'Transactional'
+        // 'sender_id' => 'YOUR_SENDER_ID', // Optional, only applicable for certain regions
+    ],
 ];

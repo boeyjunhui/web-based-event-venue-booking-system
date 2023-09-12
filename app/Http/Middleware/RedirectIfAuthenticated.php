@@ -20,6 +20,14 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
+            if ($guard = "super_admin" && Auth::guard($guard)->check()) {
+                return redirect('/evbs/dashboard');
+            } else if ($guard = "event_venue_owner" && Auth::guard($guard)->check()) {
+                return redirect('/evbs/dashboard');
+            } else if ($guard = "guest" && Auth::guard($guard)->check()) {
+                // return redirect('/');
+            }
+
             if (Auth::guard($guard)->check()) {
                 return redirect(RouteServiceProvider::HOME);
             }
