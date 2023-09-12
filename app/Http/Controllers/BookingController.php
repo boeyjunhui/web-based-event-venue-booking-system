@@ -65,7 +65,6 @@ class BookingController extends Controller
                 $eventVenues = $eventVenuesQuery->get();
 
                 $this->xRayController->addRdsQuery($eventVenuesQuery->toSql());
-
             } else if (session('user_role') == "Event Venue Owner") {
                 $eventVenueOwnerID = session('user')->id;
                 $this->xRayController->startRds();
@@ -243,7 +242,6 @@ class BookingController extends Controller
                     ->orderBy('bookings.created_at', 'desc');
                 $guestBookings = $guestBookingsQuery->get();
                 $this->xRayController->addRdsQuery($guestBookingsQuery->toSql());
-
             } else if (session('user_role') == "Event Venue Owner") {
                 $eventVenueOwnerID = session('user')->id;
 
@@ -453,7 +451,6 @@ class BookingController extends Controller
                         'updated_at' => now()
                     ]);
                 $this->xRayController->addRdsQuery('update bookings where');
-
             } else {
                 DB::table('bookings')
                     ->where('bookings.id', $bookingID)

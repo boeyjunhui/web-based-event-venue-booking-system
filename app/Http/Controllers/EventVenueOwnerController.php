@@ -37,8 +37,8 @@ class EventVenueOwnerController extends Controller
 
         $request->validate(
             [
-                'firstName' => 'required',
-                'lastName' => 'required',
+                'firstName' => 'required|regex:/^[\pL\s\-]+$/u',
+                'lastName' => 'required|regex:/^[\pL\s\-]+$/u',
                 'email' => 'required|email|unique:super_admins,email|unique:event_venue_owners,email|unique:guests,email',
                 'phoneNumber' => 'required',
                 'password' => 'required|min:8|confirmed',
@@ -152,8 +152,8 @@ class EventVenueOwnerController extends Controller
         }
 
         $request->validate([
-            'firstName' => 'required',
-            'lastName' => 'required',
+            'firstName' => 'required|regex:/^[\pL\s\-]+$/u',
+            'lastName' => 'required|regex:/^[\pL\s\-]+$/u',
             'email' => 'required|email',
             'phoneNumber' => 'required',
             'address' => 'required',

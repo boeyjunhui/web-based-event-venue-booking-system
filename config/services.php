@@ -37,6 +37,4 @@ return [
         'sms_type' => 'Transactional', // Can be 'Promotional' or 'Transactional'
         // 'sender_id' => 'YOUR_SENDER_ID', // Optional, only applicable for certain regions
     ],
-
-
 ];

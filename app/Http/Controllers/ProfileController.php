@@ -101,8 +101,8 @@ class ProfileController extends Controller
         }
 
         $request->validate([
-            'firstName' => 'required',
-            'lastName' => 'required',
+            'firstName' => 'required|regex:/^[\pL\s\-]+$/u',
+            'lastName' => 'required|regex:/^[\pL\s\-]+$/u',
             'email' => 'required|email',
             'phoneNumber' => 'required',
             'address' => 'required',
@@ -313,8 +313,8 @@ class ProfileController extends Controller
             return redirect('/login');
         } else {
             $request->validate([
-                'firstName' => 'required',
-                'lastName' => 'required',
+                'firstName' => 'required|regex:/^[\pL\s\-]+$/u',
+                'lastName' => 'required|regex:/^[\pL\s\-]+$/u',
                 'email' => 'required|email',
                 'phoneNumber' => 'required'
             ]);
